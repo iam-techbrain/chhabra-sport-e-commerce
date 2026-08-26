@@ -46,7 +46,7 @@
         <!-- HEADER ACTIONS WITH ADMIN PANEL, MY ORDERS & LOGIN LINKS -->
         <div class="header-actions">
 
-          <a href="#" class="cart-chip" @click.prevent="$emit('navigate', user ? 'account' : 'auth')" style="text-decoration: none;">
+          <a href="#" class="cart-chip hide-mobile" @click.prevent="$emit('navigate', user ? 'account' : 'auth')" style="text-decoration: none;">
             <span v-if="user">👤 {{ user.name }}</span>
             <span v-else>👤 LOGIN / MY ORDERS</span>
           </a>
@@ -100,7 +100,8 @@
         <a class="m-link" href="#" @click="$emit('navigate', 'about'); mobileMenuOpen = false">About Us <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'contact'); mobileMenuOpen = false">Contact Us <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'admin'); mobileMenuOpen = false">⚙️ Admin Control Panel <span>›</span></a>
-        <a class="m-link" href="#" @click="$emit('navigate', 'auth'); mobileMenuOpen = false">Login / Register <span>›</span></a>
+        <a class="m-link" href="#" v-if="user" @click="$emit('navigate', 'account'); mobileMenuOpen = false">👤 {{ user.name }} (My Account) <span>›</span></a>
+        <a class="m-link" href="#" v-else @click="$emit('navigate', 'auth'); mobileMenuOpen = false">👤 Login / Register <span>›</span></a>
       </div>
     </div>
   </div>

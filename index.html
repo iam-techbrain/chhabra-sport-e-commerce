@@ -1,0 +1,4028 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chhabra Sports — India's Premier Online Sports & Racquet Store</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Chhabra Sports - India's best online sports store for Tennis, Badminton, Cricket, Football, Squash & Padel racquets, shoes, strings and pro equipment since 1998. Sourced directly from SS, Yonex, Head, Babolat, Adidas, SG & Li-Ning.">
+  <meta name="keywords"
+    content="Chhabra Sports, racquets4u, badminton racquets, tennis racquets, cricket bats, Yonex Astrox, Head tennis racquet, Babolat, pro stringing India">
+
+  <!-- Modern, Clean & High-Readability Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --pitch: #11362B;
+      --pitch-light: #1B4D3E;
+      --pitch-dark: #0A241C;
+      --pitch-accent: #236551;
+      --parchment: #F8F6F0;
+      --parchment-dim: #EFEADA;
+      --ink: #141916;
+      --ink-soft: #454D47;
+      --gold: #D49B3A;
+      --gold-light: #EFC884;
+      --gold-dark: #A07022;
+      --oxblood: #6D1E2A;
+      --oxblood-light: #8F2B3B;
+      --smash-orange: #FF5420;
+      --line: #DBD5C5;
+      --line-dark: rgba(20, 25, 22, 0.12);
+      --white: #FFFFFF;
+      --radius-sm: 4px;
+      --radius: 8px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 2px 8px rgba(10, 36, 28, 0.06);
+      --shadow-md: 0 10px 30px rgba(10, 36, 28, 0.12);
+      --shadow-lg: 0 24px 64px rgba(10, 36, 28, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--ink);
+      background: var(--parchment);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Subtle Court Grid Background Texture */
+    .court-pattern {
+      background-image:
+        linear-gradient(to right, rgba(212, 155, 58, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(212, 155, 58, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .display {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .mono {
+      font-family: 'Space Mono', monospace;
+    }
+
+    .wrap {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--pitch-dark);
+      color: var(--parchment);
+      border-left: 4px solid var(--gold);
+      padding: 14px 20px;
+      box-shadow: var(--shadow-lg);
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(120%);
+      transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+      border-radius: var(--radius-sm);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--gold);
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* ============ ANNOUNCEMENT TOPBAR ============ */
+    .announce {
+      background: var(--pitch-dark);
+      color: var(--parchment-dim);
+      font-family: 'Space Mono', monospace;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(212, 155, 58, 0.2);
+    }
+
+    .announce span {
+      opacity: .45;
+      margin: 0 12px;
+    }
+
+    .announce strong {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ============ SITE HEADER WITH OFFICIAL LOGO IMAGE ============ */
+    header.site {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--parchment);
+      border-bottom: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      max-width: 1360px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+
+    /* Official Chhabra Sports Logo Styling */
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+      border-radius: 6px;
+      object-fit: contain;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+      border: 1px solid var(--line);
+      transition: transform .2s ease;
+    }
+
+    .logo-link:hover .logo-img {
+      transform: scale(1.03);
+    }
+
+    .logo-text-block {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-text-block .wordmark {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--pitch);
+      text-transform: uppercase;
+    }
+
+    .logo-text-block .wordmark em {
+      font-style: normal;
+      color: var(--smash-orange);
+    }
+
+    .logo-text-block .tagline {
+      font-family: 'Space Mono', monospace;
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    nav.primary {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    nav.primary>.nav-item {
+      position: relative;
+    }
+
+    nav.primary>.nav-item>a {
+      display: block;
+      padding: 14px 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: var(--ink);
+      text-transform: uppercase;
+      border-bottom: 2.5px solid transparent;
+      transition: .2s;
+    }
+
+    nav.primary>.nav-item:hover>a {
+      color: var(--pitch);
+      border-bottom-color: var(--gold);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: .2s;
+      position: relative;
+      color: var(--ink);
+      background: transparent;
+      border: none;
+    }
+
+    .icon-btn:hover {
+      background: var(--parchment-dim);
+      color: var(--pitch);
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--oxblood);
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--pitch);
+      color: var(--parchment);
+      padding: 9px 20px;
+      border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+      border: none;
+      margin-left: 4px;
+      box-shadow: 0 4px 12px rgba(17, 54, 43, 0.25);
+    }
+
+    .cart-chip:hover {
+      background: var(--oxblood);
+      transform: translateY(-1px);
+    }
+
+    .cart-chip svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .hamburger {
+      display: none;
+    }
+
+    /* Mega Menu (Racquets4u Inspired Layout) */
+    .mega {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      width: 860px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-radius: var(--radius);
+      opacity: 0;
+      visibility: hidden;
+      transition: .22s ease;
+      padding: 28px 8px;
+      z-index: 100;
+    }
+
+    .nav-item:hover .mega {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .mega-col {
+      padding: 0 22px;
+      border-right: 1px solid var(--parchment-dim);
+    }
+
+    .mega-col:last-child {
+      border-right: none;
+    }
+
+    .mega-col h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+
+    .mega-col a {
+      display: block;
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      padding: 6px 0;
+      transition: .15s;
+      font-weight: 500;
+    }
+
+    .mega-col a:hover {
+      color: var(--pitch);
+      padding-left: 4px;
+      font-weight: 700;
+    }
+
+    .mega-feature {
+      grid-column: span 1;
+      padding: 0 0 0 16px;
+    }
+
+    .mega-feature img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    .mega-feature .mf-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .mega-feature .mf-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--gold-dark);
+      letter-spacing: 1px;
+      margin-top: 4px;
+      display: inline-block;
+      font-weight: 700;
+    }
+
+    /* ============ HERO SECTION ============ */
+    .hero {
+      position: relative;
+      background: var(--pitch);
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      min-height: 620px;
+      overflow: hidden;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      padding: 80px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: var(--parchment);
+    }
+
+    .hero-copy .eyebrow {
+      color: var(--gold-light);
+    }
+
+    .hero-copy h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(46px, 5.8vw, 80px);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      margin: 18px 0 22px;
+      color: var(--white);
+    }
+
+    .hero-copy h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero-copy h1 span.highlight {
+      color: var(--smash-orange);
+    }
+
+    .hero-copy p {
+      font-size: 16.5px;
+      line-height: 1.65;
+      color: #D7E0DA;
+      max-width: 460px;
+      margin-bottom: 34px;
+      font-weight: 400;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 16px 28px;
+      border: 1.5px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: .2s;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--pitch-dark);
+    }
+
+    .btn-gold:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-smash {
+      background: var(--smash-orange);
+      color: #fff;
+    }
+
+    .btn-smash:hover {
+      background: #E64A19;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-outline {
+      border-color: rgba(248, 246, 240, .4);
+      color: var(--parchment);
+      background: rgba(248, 246, 240, .08);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--parchment);
+      /* background: rgba(248, 246, 240, .08); */
+    }
+
+    .btn-dark {
+      background: var(--pitch);
+      color: var(--parchment);
+    }
+
+    .btn-dark:hover {
+      background: var(--pitch-light);
+    }
+
+    .hero-visual {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual img.hero-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(90deg, var(--pitch) 0%, rgba(17, 54, 43, 0.1) 40%, rgba(17, 54, 43, 0.7) 100%);
+    }
+
+    .hero-stitch {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: repeating-linear-gradient(180deg, var(--gold) 0 12px, transparent 12px 24px);
+      opacity: .6;
+      z-index: 2;
+    }
+
+    /* Racquet Finder Widget Badge (Racquets4u Feature) */
+    .racquet-finder-badge {
+      position: absolute;
+      right: 36px;
+      bottom: 36px;
+      z-index: 3;
+      background: rgba(10, 36, 28, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 155, 58, 0.35);
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #fff;
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .racquet-finder-badge:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .racquet-finder-badge svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--gold);
+      fill: none;
+    }
+
+    .racquet-finder-badge .rf-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--gold-light);
+    }
+
+    .racquet-finder-badge .rf-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      color: #B9C4BD;
+    }
+
+    /* Scoreboard Ticker */
+    .scoreboard {
+      background: var(--pitch-dark);
+      border-top: 1px solid rgba(212, 155, 58, .25);
+      border-bottom: 1px solid rgba(212, 155, 58, .15);
+      display: flex;
+      overflow: hidden;
+    }
+
+    .scoreboard-track {
+      display: flex;
+      animation: ticker 34s linear infinite;
+    }
+
+    .scoreboard:hover .scoreboard-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes ticker {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .score-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 16px 40px;
+      border-right: 1px solid rgba(212, 155, 58, .18);
+      white-space: nowrap;
+    }
+
+    .score-item .num {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--gold);
+    }
+
+    .score-item .lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #B9C4BD;
+    }
+
+    /* ============ RACQUETS4U TRUST BADGES STRIP ============ */
+    .trust-strip {
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      padding: 20px 0;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .trust-item svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--pitch);
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
+
+    .trust-item div {
+      text-align: left;
+    }
+
+    .trust-item h5 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--pitch);
+    }
+
+    .trust-item p {
+      font-size: 12px;
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    /* ============ SECTION HEADINGS & TABS ============ */
+    .section {
+      padding: 90px 0;
+    }
+
+    .section.tight {
+      padding: 60px 0;
+    }
+
+    .sec-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .sec-head h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(30px, 3.5vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+
+    .sec-head .eyebrow {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .sec-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--pitch);
+      border-bottom: 1.5px solid var(--gold);
+      padding-bottom: 3px;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .sec-link:hover {
+      color: var(--oxblood);
+    }
+
+    /* Category Filter Pills */
+    .filter-pills {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 28px;
+    }
+
+    .pill-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 9px 18px;
+      border-radius: 100px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      transition: .2s;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .pill-btn:hover,
+    .pill-btn.active {
+      background: var(--pitch);
+      color: var(--parchment);
+      border-color: var(--pitch);
+    }
+
+    /* ============ CATEGORY GRID ============ */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .cat-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--pitch);
+      cursor: pointer;
+    }
+
+    .cat-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+      filter: brightness(.82);
+    }
+
+    .cat-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .cat-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10, 36, 28, 0) 40%, rgba(10, 36, 28, .88) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 22px;
+    }
+
+    .cat-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .cat-label span {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .cat-label .arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .25s;
+      flex-shrink: 0;
+    }
+
+    .cat-card:hover .cat-label .arrow {
+      background: var(--gold);
+      border-color: var(--gold);
+      transform: translateX(4px);
+    }
+
+    .cat-label .arrow svg {
+      width: 14px;
+      height: 14px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .cat-card:hover .cat-label .arrow svg {
+      stroke: var(--pitch-dark);
+    }
+
+    /* ============ EDITORIAL COLLECTIONS ============ */
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 18px;
+    }
+
+    .ed-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 420px;
+      background: var(--ink);
+      border-radius: var(--radius);
+    }
+
+    .ed-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      transition: transform .7s ease;
+    }
+
+    .ed-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .ed-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(10, 36, 28, .9) 0%, rgba(10, 36, 28, .15) 60%);
+    }
+
+    .ed-content {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      padding: 36px;
+      z-index: 2;
+      color: #fff;
+    }
+
+    .ed-content .eyebrow {
+      color: var(--gold-light);
+    }
+
+    .ed-content h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      margin: 10px 0 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .ed-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ============ PRODUCT CARDS & GRID ============ */
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .prod-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      position: relative;
+      transition: .25s;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .prod-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--pitch);
+      transform: translateY(-3px);
+    }
+
+    .prod-media {
+      position: relative;
+      aspect-ratio: 1/1.05;
+      overflow: hidden;
+      background: var(--parchment-dim);
+      cursor: pointer;
+    }
+
+    .prod-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity .35s ease;
+    }
+
+    .prod-media img.secondary {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+
+    .prod-card:hover .prod-media img.secondary {
+      opacity: 1;
+    }
+
+    .prod-card:hover .prod-media img.primary {
+      opacity: 0;
+    }
+
+    .prod-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--oxblood);
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      z-index: 3;
+      border-radius: 2px;
+    }
+
+    .prod-tag.new {
+      background: var(--pitch);
+    }
+
+    .prod-tag.bestseller {
+      background: var(--gold-dark);
+    }
+
+    .prod-tag.sale {
+      background: var(--smash-orange);
+    }
+
+    .prod-wish {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      transition: .2s;
+      border: none;
+    }
+
+    .prod-wish svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--ink);
+      fill: none;
+      stroke-width: 1.8;
+      transition: .2s;
+    }
+
+    .prod-wish.active svg {
+      fill: var(--oxblood);
+      stroke: var(--oxblood);
+    }
+
+    .prod-wish:hover {
+      transform: scale(1.1);
+    }
+
+    .quick-add-btn {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 3;
+      background: var(--pitch);
+      color: var(--parchment);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 12px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: .25s;
+      border: none;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+    }
+
+    .prod-card:hover .quick-add-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .quick-add-btn:hover {
+      background: var(--smash-orange);
+      color: #fff;
+    }
+
+    .prod-info {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .prod-brand {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .prod-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      min-height: 40px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .prod-name:hover {
+      color: var(--pitch);
+    }
+
+    .prod-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .stars {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .rev-count {
+      font-size: 11px;
+      color: var(--ink-soft);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .prod-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .price-now {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 16.5px;
+      color: var(--ink);
+    }
+
+    .price-old {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-decoration: line-through;
+    }
+
+    .price-off {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--oxblood);
+      font-weight: 700;
+    }
+
+    .spec-chip {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 9.5px;
+      background: var(--parchment-dim);
+      padding: 3px 8px;
+      border-radius: 3px;
+      margin-top: 4px;
+      color: var(--pitch-dark);
+      font-weight: 600;
+    }
+
+    /* ============ PRO STRINGING & KNOCKING SERVICE ============ */
+    .stringing-banner {
+      background: linear-gradient(135deg, var(--pitch-dark) 0%, var(--pitch) 100%);
+      color: var(--parchment);
+      border-radius: var(--radius);
+      overflow: hidden;
+      padding: 60px 50px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      border: 1px solid rgba(212, 155, 58, 0.25);
+    }
+
+    .stringing-content h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(32px, 4vw, 46px);
+      line-height: 1.05;
+      margin: 12px 0 16px;
+      color: #fff;
+    }
+
+    .stringing-content p {
+      color: #CBE0D6;
+      line-height: 1.65;
+      margin-bottom: 28px;
+      max-width: 480px;
+      font-weight: 400;
+    }
+
+    .spec-options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .spec-opt {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(212, 155, 58, 0.2);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+
+    .spec-opt b {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--gold);
+    }
+
+    .spec-opt span {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #A2B5AB;
+    }
+
+    .stringing-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stringing-visual svg {
+      width: 220px;
+      height: auto;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+    }
+
+    /* ============ BRANDS STRIP ============ */
+    .brand-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .brand-cell {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      aspect-ratio: 2.4/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: var(--ink-soft);
+      transition: .2s;
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    .brand-cell:hover {
+      color: var(--pitch);
+      background: var(--parchment-dim);
+    }
+
+    /* ============ PERFORMANCE BANNER ============ */
+    .perf-banner {
+      position: relative;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    .perf-banner img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .55;
+    }
+
+    .perf-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10, 36, 28, .92) 20%, rgba(10, 36, 28, .3) 100%);
+    }
+
+    .perf-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 32px;
+      max-width: 1360px;
+      margin: 0 auto;
+      width: 100%;
+      color: #fff;
+    }
+
+    .perf-content h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 5vw, 66px);
+      letter-spacing: -0.02em;
+      margin: 14px 0 18px;
+    }
+
+    .perf-content p {
+      max-width: 460px;
+      color: #D7E0DA;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ============ WHY US ============ */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .why-card {
+      background: var(--parchment);
+      padding: 34px 24px;
+      transition: .2s;
+    }
+
+    .why-card:hover {
+      background: var(--white);
+    }
+
+    .why-card svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--pitch);
+      fill: none;
+      stroke-width: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .why-card h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .why-card p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* ============ TEAM / INSTITUTIONAL ============ */
+    .team-sec {
+      background: var(--pitch);
+      color: var(--parchment);
+      padding: 90px 0;
+    }
+
+    .team-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .team-sec h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(32px, 4vw, 50px);
+      margin: 14px 0 18px;
+      color: #fff;
+    }
+
+    .team-sec p {
+      color: #CBD6CF;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      max-width: 440px;
+    }
+
+    .team-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .team-list li {
+      font-family: 'Space Mono', monospace;
+      font-size: 12.5px;
+      letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #DCE5DF;
+    }
+
+    .team-list li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .team-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .team-photos img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    .team-photos img:nth-child(2) {
+      margin-top: 32px;
+    }
+
+    /* ============ TESTIMONIALS ============ */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testi-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 32px;
+      position: relative;
+    }
+
+    .testi-card .stars {
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .testi-card p {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin-bottom: 22px;
+    }
+
+    .testi-who {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+
+    .testi-name {
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .testi-prod {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-weight: 700;
+    }
+
+    /* ============ INSTAGRAM ============ */
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .insta-item {
+      position: relative;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: var(--pitch);
+      border-radius: var(--radius-sm);
+    }
+
+    .insta-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: .4s;
+    }
+
+    .insta-item:hover img {
+      transform: scale(1.1);
+      opacity: .75;
+    }
+
+    .insta-item .ic {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 1.8;
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .insta-item:hover .ic {
+      opacity: 1;
+    }
+
+    /* ============ NEWSLETTER ============ */
+    .newsletter {
+      background: var(--pitch-dark);
+      padding: 80px 0;
+      text-align: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .newsletter h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(30px, 4vw, 46px);
+      margin: 12px 0 14px;
+    }
+
+    .newsletter p {
+      color: #B9C4BD;
+      margin-bottom: 32px;
+    }
+
+    .nl-form {
+      display: flex;
+      max-width: 460px;
+      margin: 0 auto;
+      border: 1.5px solid rgba(248, 246, 240, .35);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .nl-form input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 16px 18px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .nl-form input::placeholder {
+      color: #8FA097;
+    }
+
+    .nl-form input:focus {
+      outline: none;
+    }
+
+    .nl-form button {
+      background: var(--gold);
+      color: var(--pitch-dark);
+      border: none;
+      padding: 0 26px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      transition: .2s;
+    }
+
+    .nl-form button:hover {
+      background: var(--gold-light);
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: var(--ink);
+      color: #B9C0B9;
+      padding: 80px 0 0;
+    }
+
+    .foot-top {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .foot-brand .wordmark {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .foot-brand p {
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 16px 0 22px;
+      max-width: 280px;
+      color: #8B948B;
+    }
+
+    .foot-social {
+      display: flex;
+      gap: 10px;
+    }
+
+    .foot-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s;
+    }
+
+    .foot-social a:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .foot-social svg {
+      width: 15px;
+      height: 15px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 1.6;
+    }
+
+    .foot-col h5 {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .foot-col a {
+      display: block;
+      font-size: 13.5px;
+      color: #B9C0B9;
+      padding: 6px 0;
+      transition: .15s;
+      font-weight: 500;
+    }
+
+    .foot-col a:hover {
+      color: #fff;
+      padding-left: 3px;
+    }
+
+    .foot-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      font-size: 12px;
+      color: #7A827A;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .foot-bottom .pay-icons {
+      display: flex;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: .5px;
+    }
+
+    .foot-bottom .pay-icons span {
+      border: 1px solid rgba(255, 255, 255, .15);
+      padding: 4px 8px;
+      border-radius: 2px;
+    }
+
+    /* ============ CART DRAWER MODAL ============ */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 36, 28, 0.6);
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: .3s ease;
+      backdrop-filter: blur(4px);
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 440px;
+      max-width: 92vw;
+      background: var(--parchment);
+      z-index: 310;
+      transform: translateX(100%);
+      transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .drawer-backdrop.open .cart-drawer {
+      transform: translateX(0);
+    }
+
+    .cart-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+    }
+
+    .cart-header h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--pitch);
+    }
+
+    .close-drawer {
+      background: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .close-drawer:hover {
+      background: var(--parchment-dim);
+    }
+
+    .close-drawer svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--ink);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .free-ship-bar {
+      background: var(--pitch-dark);
+      color: var(--parchment);
+      padding: 10px 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .free-ship-bar span {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      background: var(--white);
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+    }
+
+    .cart-item img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+    }
+
+    .cart-item-price {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--pitch);
+    }
+
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--line);
+      background: var(--parchment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 2px;
+    }
+
+    .qty-val {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .remove-item {
+      color: var(--oxblood);
+      font-size: 11px;
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .cart-footer {
+      padding: 24px;
+      border-top: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .cart-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .cart-coupon {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .cart-coupon input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .cart-coupon button {
+      background: var(--pitch);
+      color: #fff;
+      border: none;
+      padding: 0 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ============ SEARCH DRAWER / MODAL ============ */
+    .search-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 36, 28, 0.88);
+      z-index: 350;
+      opacity: 0;
+      visibility: hidden;
+      transition: .3s ease;
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      padding: 40px 24px;
+      align-items: center;
+    }
+
+    .search-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .search-box-wrap {
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--parchment);
+      border: 2px solid var(--gold);
+      padding: 20px 24px;
+      font-size: 18px;
+      color: var(--ink);
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      outline: none;
+    }
+
+    .close-search {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--ink-soft);
+    }
+
+    .search-results {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-result-item {
+      background: var(--white);
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+
+    .search-result-item:hover {
+      background: var(--parchment-dim);
+    }
+
+    .search-result-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ============ RACQUET FINDER WIZARD MODAL (Racquets4u Feature) ============ */
+    .rf-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 36, 28, 0.85);
+      z-index: 420;
+      opacity: 0;
+      visibility: hidden;
+      transition: .3s ease;
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .rf-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .rf-card {
+      background: var(--parchment);
+      width: 100%;
+      max-width: 640px;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .rf-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: var(--pitch);
+      margin-bottom: 8px;
+    }
+
+    .rf-step {
+      margin-top: 20px;
+    }
+
+    .rf-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .rf-opt-btn {
+      background: var(--white);
+      border: 1.5px solid var(--line);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      text-align: left;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .rf-opt-btn:hover,
+    .rf-opt-btn.active {
+      border-color: var(--pitch);
+      background: rgba(17, 54, 43, 0.06);
+    }
+
+    .rf-opt-btn h6 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--pitch);
+    }
+
+    .rf-opt-btn p {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    /* ============ CHECKOUT MODAL ============ */
+    .checkout-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 400;
+      opacity: 0;
+      visibility: hidden;
+      transition: .3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .checkout-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .checkout-card {
+      background: var(--parchment);
+      width: 100%;
+      max-width: 680px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checkout-head {
+      background: var(--pitch);
+      color: #fff;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .checkout-head h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--gold-light);
+    }
+
+    .checkout-body {
+      padding: 28px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      font-size: 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-weight: 500;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Payment Options */
+    .pay-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .pay-option {
+      border: 1.5px solid var(--line);
+      background: var(--white);
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pay-option.active {
+      border-color: var(--pitch);
+      background: rgba(17, 54, 43, 0.06);
+      color: var(--pitch);
+    }
+
+    /* ============ PRODUCT QUICK VIEW MODAL ============ */
+    .qv-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 36, 28, 0.7);
+      z-index: 320;
+      opacity: 0;
+      visibility: hidden;
+      transition: .3s ease;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .qv-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .qv-card {
+      background: var(--white);
+      width: 100%;
+      max-width: 880px;
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .qv-media {
+      background: var(--parchment-dim);
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .qv-media img {
+      max-height: 360px;
+      object-fit: contain;
+    }
+
+    .qv-details {
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .close-qv {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Mobile Drawer */
+    .mobile-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      visibility: hidden;
+    }
+
+    .mobile-drawer.open {
+      visibility: visible;
+    }
+
+    .mobile-scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 36, 28, .6);
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .mobile-drawer.open .mobile-scrim {
+      opacity: 1;
+    }
+
+    .mobile-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 82%;
+      max-width: 340px;
+      background: var(--parchment);
+      transform: translateX(-100%);
+      transition: .3s ease;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .mobile-drawer.open .mobile-panel {
+      transform: translateX(0);
+    }
+
+    .mobile-panel .m-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 4px;
+      border-bottom: 1px solid var(--line);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    @media (max-width:1100px) {
+      .cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .prod-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .why-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .brand-strip {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 16px;
+      }
+
+      .foot-top {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 36px;
+      }
+
+      .testi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .team-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .stringing-banner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width:760px) {
+      .wrap {
+        padding: 0 18px;
+      }
+
+      nav.primary,
+      .header-actions .icon-btn.hide-mobile {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header-inner {
+        padding: 14px 18px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .hero-visual {
+        height: 280px;
+        order: -1;
+      }
+
+      .hero-copy {
+        padding: 44px 20px;
+      }
+
+      .hero-copy h1 {
+        font-size: 42px;
+      }
+
+      .section {
+        padding: 54px 0;
+      }
+
+      .cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .editorial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .prod-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .brand-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .trust-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .foot-top {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .insta-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .perf-content h2 {
+        font-size: 34px;
+      }
+
+      .sec-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .qv-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sticky-mobile-cta {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 150;
+      background: var(--pitch-dark);
+      padding: 12px 16px;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, .2);
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    @media (max-width:760px) {
+      .sticky-mobile-cta {
+        display: flex;
+      }
+    }
+
+    .sticky-mobile-cta .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body class="court-pattern">
+
+  <!-- ANNOUNCEMENT TOPBAR -->
+  <div class="announce">
+    FREE PAN-INDIA EXPRESS DELIVERY ON ORDERS OVER <strong>₹2,999</strong> <span>/</span> 100% ORIGINAL WARRANTY
+    <span>/</span> HELPLINE: <strong>+91-72772-52440</strong>
+  </div>
+
+  <!-- SITE HEADER WITH OFFICIAL LOGO IMAGE -->
+  <header class="site">
+    <div class="header-inner">
+      <button class="hamburger icon-btn" id="hamburgerBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      <!-- OFFICIAL LOGO IMAGE ADDED FROM USER SPECIFICATION -->
+      <a href="#" class="logo-link">
+        <img
+          src="https://chhabrasports.com/wp-content/uploads/2025/09/csa-acrylic-letter-cutting-scaled-e1756718460651.jpg"
+          alt="Chhabra Sports Official Logo" class="logo-img">
+        <!-- <div class="logo-text-block">
+        <span class="wordmark">Chhabra <em>Sports</em></span>
+        <span class="tagline">Since 1998 · Est. Ludhiana</span>
+      </div> -->
+      </a>
+
+      <!-- PRIMARY NAVIGATION (Racquets4u + SmashKart Inspired) -->
+      <nav class="primary">
+        <div class="nav-item"><a href="#categories">Home</a></div>
+
+        <!-- BADMINTON MEGA MENU -->
+        <div class="nav-item">
+          <a href="#products" onclick="filterCategory('badminton')">Badminton</a>
+          <div class="mega">
+            <div class="mega-col">
+              <h4>Racquets</h4>
+              <a href="#products" onclick="filterCategory('badminton')">Yonex Astrox / Nanoflare</a>
+              <a href="#products" onclick="filterCategory('badminton')">Li-Ning Halbertec / Tectonic</a>
+              <a href="#products" onclick="filterCategory('badminton')">Head & Apacs Racquets</a>
+              <a href="#products" onclick="filterCategory('badminton')">Light Weight & High Tension</a>
+            </div>
+            <div class="mega-col">
+              <h4>Shuttles & Strings</h4>
+              <a href="#products" onclick="filterCategory('badminton')">Feather Shuttlecocks (RSL/Yonex)</a>
+              <a href="#products" onclick="filterCategory('badminton')">Nylon Shuttlecocks</a>
+              <a href="#products" onclick="filterCategory('badminton')">BG65 / BG80 / Aerosonic</a>
+              <a href="#stringing">Pro Stringing Service (22-30 lbs)</a>
+            </div>
+            <div class="mega-col">
+              <h4>Court Shoes & Gear</h4>
+              <a href="#products" onclick="filterCategory('shoes')">Non-Marking Badminton Shoes</a>
+              <a href="#products">Kit Bags (3R / 6R / Duffle)</a>
+              <a href="#products">Grips & Overgrips</a>
+            </div>
+            <div class="mega-feature">
+              <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&q=80&auto=format&fit=crop"
+                alt="Badminton Equipment">
+              <div class="mf-label">Yonex & Li-Ning</div>
+              <span class="mf-cta">Explore Racquets →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TENNIS MEGA MENU (Racquets4u Style) -->
+        <div class="nav-item">
+          <a href="#products" onclick="filterCategory('tennis')">Tennis</a>
+          <div class="mega">
+            <div class="mega-col">
+              <h4>Tennis Racquets</h4>
+              <a href="#products" onclick="filterCategory('tennis')">Head Speed / Radical</a>
+              <a href="#products" onclick="filterCategory('tennis')">Babolat Pure Drive / Aero</a>
+              <a href="#products" onclick="filterCategory('tennis')">Wilson Pro Staff / Blade</a>
+              <a href="#products" onclick="filterCategory('tennis')">Yonex EZONE / VCORE</a>
+            </div>
+            <div class="mega-col">
+              <h4>Balls & Strings</h4>
+              <a href="#products" onclick="filterCategory('tennis')">Championship Tennis Balls</a>
+              <a href="#products" onclick="filterCategory('tennis')">Luxilon & Solinco Strings</a>
+              <a href="#products" onclick="filterCategory('tennis')">Vibration Dampeners</a>
+            </div>
+            <div class="mega-col">
+              <h4>Bags & Shoes</h4>
+              <a href="#products" onclick="filterCategory('shoes')">All-Court Tennis Shoes</a>
+              <a href="#products">9R & 12R Tour Kitbags</a>
+              <a href="#products">Replacement Grips</a>
+            </div>
+            <div class="mega-feature">
+              <img src="https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=400&q=80&auto=format&fit=crop"
+                alt="Tennis Gear">
+              <div class="mf-label">Head & Babolat</div>
+              <span class="mf-cta">Shop Tennis Range →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRICKET MEGA MENU -->
+        <div class="nav-item">
+          <a href="#products" onclick="filterCategory('cricket')">Cricket</a>
+          <div class="mega">
+            <div class="mega-col">
+              <h4>Bats & Balls</h4>
+              <a href="#products" onclick="filterCategory('cricket')">English Willow Bats (SS/SG/MRF)</a>
+              <a href="#products" onclick="filterCategory('cricket')">Kashmir Willow Bats</a>
+              <a href="#products" onclick="filterCategory('cricket')">Leather Match Balls</a>
+            </div>
+            <div class="mega-col">
+              <h4>Protection</h4>
+              <a href="#products">Batting & Keeping Gloves</a>
+              <a href="#products">Legguards & Pads</a>
+              <a href="#products">Helmets & Guards</a>
+            </div>
+            <div class="mega-col">
+              <h4>Kitbags & Shoes</h4>
+              <a href="#products" onclick="filterCategory('shoes')">Cricket Spike Shoes</a>
+              <a href="#products">Wheelie Kit Bags</a>
+            </div>
+            <div class="mega-feature">
+              <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&q=80&auto=format&fit=crop"
+                alt="Cricket Bats">
+              <div class="mf-label">SS & SG Ton</div>
+              <span class="mf-cta">Shop English Willow →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item"><a href="#products" onclick="filterCategory('shoes')">Shoes</a></div>
+        <div class="nav-item"><a href="#products" onclick="filterCategory('fitness')">Fitness</a></div>
+        <div class="nav-item"><a href="#stringing">Services</a></div>
+      </nav>
+
+      <!-- HEADER ACTIONS -->
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Search" id="searchBtn">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+
+        <button class="icon-btn hide-mobile" aria-label="Wishlist" id="headerWishlistBtn">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
+          </svg>
+          <span class="badge" id="wishCount">0</span>
+        </button>
+
+        <button class="cart-chip" id="cartChipBtn">
+          <svg viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          <span>CART</span> (<span id="cartCount">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE NAVIGATION DRAWER -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-scrim" id="mobileScrim"></div>
+    <div class="mobile-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img
+            src="https://chhabrasports.com/wp-content/uploads/2025/09/csa-acrylic-letter-cutting-scaled-e1756718460651.jpg"
+            style="height:36px; border-radius:4px;">
+          <span class="wordmark display" style="font-size:20px; color:var(--pitch);">Chhabra <em
+              style="color:var(--smash-orange)">Sports</em></span>
+        </div>
+        <button class="icon-btn" id="closeDrawer">
+          <svg viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <a class="m-link" href="#categories" onclick="closeMobileDrawer()">Categories <span>›</span></a>
+      <a class="m-link" href="#products" onclick="filterCategory('badminton'); closeMobileDrawer();">Badminton Racquets
+        <span>›</span></a>
+      <a class="m-link" href="#products" onclick="filterCategory('tennis'); closeMobileDrawer();">Tennis Gear
+        <span>›</span></a>
+      <a class="m-link" href="#products" onclick="filterCategory('cricket'); closeMobileDrawer();">Cricket Equipment
+        <span>›</span></a>
+      <a class="m-link" href="#products" onclick="filterCategory('shoes'); closeMobileDrawer();">Sports Shoes
+        <span>›</span></a>
+      <a class="m-link" href="#stringing" onclick="closeMobileDrawer()">Pro Stringing Service <span>›</span></a>
+      <a class="m-link" href="#" onclick="openRacquetFinder(); closeMobileDrawer();">Racquet Finder Wizard
+        <span>›</span></a>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow display">India's Preferred Online Racquet & Sports Store</span>
+      <h1>Play Hard.<br><em>Perform</em> <span class="highlight">Better.</span></h1>
+      <p>Authentic Yonex, Head, Babolat & Li-Ning racquets, SS English Willow cricket bats, tournament shoes and
+        certified stringing — trusted by athletes across India since 1998.</p>
+      <div class="hero-ctas">
+        <a href="#products" class="btn btn-gold">
+          Shop Catalog
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+        <button onclick="openRacquetFinder()" class="btn btn-outline">⚡ Launch Racquet Finder</button>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-stitch"></div>
+      <img class="hero-bg"
+        src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=1200&q=80&auto=format&fit=crop"
+        alt="Athlete in action">
+
+      <!-- Racquet Finder Widget Badge (Racquets4u Integration) -->
+      <div class="racquet-finder-badge hide-mobile" onclick="openRacquetFinder()">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <polygon points="12 8 8 16 16 16" />
+        </svg>
+        <div>
+          <div class="rf-title">Racquet Finder Tool</div>
+          <div class="rf-sub">Find your perfect frame in 3 steps →</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCOREBOARD TICKER -->
+  <div class="scoreboard">
+    <div class="scoreboard-track">
+      <div class="score-item"><span class="num">25+</span><span class="lbl">Years in Sport</span></div>
+      <div class="score-item"><span class="num">12,000+</span><span class="lbl">Products Stocked</span></div>
+      <div class="score-item"><span class="num">100%</span><span class="lbl">Genuine Warranty</span></div>
+      <div class="score-item"><span class="num">500+</span><span class="lbl">Academies Equipped</span></div>
+      <div class="score-item"><span class="num">60 MIN</span><span class="lbl">Pro Stringing Service</span></div>
+      <div class="score-item"><span class="num">4.8/5</span><span class="lbl">Rated by Players</span></div>
+      <!-- Duplicate for smooth loop -->
+      <div class="score-item"><span class="num">25+</span><span class="lbl">Years in Sport</span></div>
+      <div class="score-item"><span class="num">12,000+</span><span class="lbl">Products Stocked</span></div>
+      <div class="score-item"><span class="num">100%</span><span class="lbl">Genuine Warranty</span></div>
+      <div class="score-item"><span class="num">500+</span><span class="lbl">Academies Equipped</span></div>
+      <div class="score-item"><span class="num">60 MIN</span><span class="lbl">Pro Stringing Service</span></div>
+      <div class="score-item"><span class="num">4.8/5</span><span class="lbl">Rated by Players</span></div>
+    </div>
+  </div>
+
+  <!-- RACQUETS4U TRUST BADGES STRIP -->
+  <div class="trust-strip">
+    <div class="wrap trust-grid">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        <div>
+          <h5>100% Original Products</h5>
+          <p>Direct from Yonex, Head, Babolat & SS</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24">
+          <rect x="1" y="3" width="15" height="13" />
+          <path d="M16 8h4l3 3v5h-7V8z" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+        <div>
+          <h5>Free & Fast Dispatch</h5>
+          <p>Pan-India shipping in 24 hours</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        <div>
+          <h5>Pro Custom Stringing</h5>
+          <p>Certified stringers match tension 22-30 lbs</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 12a9 9 0 1 1-6.2-8.56" />
+          <polyline points="21 3 21 9 15 9" />
+        </svg>
+        <div>
+          <h5>15-Day Easy Returns</h5>
+          <p>Hassle-free replacement guarantee</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP BY CATEGORY -->
+  <section class="section" id="categories">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Shop by Sport & Category</span>
+          <h2>Explore Sports Categories</h2>
+        </div>
+        <a href="#products" class="sec-link" onclick="filterCategory('all')">View Complete Catalog →</a>
+      </div>
+
+      <div class="cat-grid">
+        <div class="cat-card reveal" onclick="filterCategory('badminton')">
+          <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop"
+            alt="Badminton">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Badminton & Racquets</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('tennis')">
+          <img src="https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop"
+            alt="Tennis">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Tennis Racquets & Gear</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('cricket')">
+          <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=500&q=80&auto=format&fit=crop"
+            alt="Cricket">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Cricket Bats & Gear</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('shoes')">
+          <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80&auto=format&fit=crop"
+            alt="Court Shoes">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Non-Marking Court Shoes</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('football')">
+          <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=500&q=80&auto=format&fit=crop"
+            alt="Football">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Football & Boots</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('fitness')">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80&auto=format&fit=crop"
+            alt="Fitness">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Gym & Fitness Gear</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('apparel')">
+          <img src="https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=500&q=80&auto=format&fit=crop"
+            alt="Sportswear">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Dri-FIT Apparel</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cat-card reveal" onclick="filterCategory('all')">
+          <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&q=80&auto=format&fit=crop"
+            alt="Strings & Grips">
+          <div class="cat-overlay">
+            <div class="cat-label"><span>Strings, Grips & Accessories</span>
+              <div class="arrow"><svg viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITORIAL FEATURED COLLECTIONS -->
+  <section class="section tight" id="collections" style="background:var(--parchment-dim);">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Curated Collections</span>
+          <h2>Tournament Ready Selections</h2>
+        </div>
+      </div>
+      <div class="editorial-grid">
+        <div class="ed-card reveal" style="min-height:520px;">
+          <img src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=900&q=80&auto=format&fit=crop"
+            alt="Cricket Match Essentials">
+          <div class="ed-content">
+            <span class="eyebrow">01 · Match Ready</span>
+            <h3>English Willow Pro Series</h3>
+            <button class="btn btn-outline"
+              onclick="filterCategory('cricket'); document.getElementById('products').scrollIntoView();">Explore Cricket
+              Bats →</button>
+          </div>
+        </div>
+        <div class="ed-stack">
+          <div class="ed-card reveal" style="min-height:251px;">
+            <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=700&q=80&auto=format&fit=crop"
+              alt="Badminton Pro Racquets">
+            <div class="ed-content">
+              <span class="eyebrow">02 · Court Speed</span>
+              <h3 style="font-size:24px;">Yonex Astrox & Head Speed</h3>
+            </div>
+          </div>
+          <div class="ed-card reveal" style="min-height:251px;">
+            <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=700&q=80&auto=format&fit=crop"
+              alt="Sports Footwear">
+            <div class="ed-content">
+              <span class="eyebrow">03 · Built to Move</span>
+              <h3 style="font-size:24px;">Asics & Adidas Court Shoes</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN E-COMMERCE PRODUCTS SECTION WITH FILTER TABS -->
+  <section class="section" id="products">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Browse Online Store</span>
+          <h2>Featured Racquets & Sports Gear</h2>
+        </div>
+        <div class="sec-link" style="cursor:default;" id="catalogCount">Showing 10 products</div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills reveal">
+        <button class="pill-btn active" onclick="filterCategory('all')">All Products</button>
+        <button class="pill-btn" onclick="filterCategory('badminton')">Badminton</button>
+        <button class="pill-btn" onclick="filterCategory('tennis')">Tennis</button>
+        <button class="pill-btn" onclick="filterCategory('cricket')">Cricket</button>
+        <button class="pill-btn" onclick="filterCategory('shoes')">Shoes & Spikes</button>
+        <button class="pill-btn" onclick="filterCategory('football')">Football</button>
+        <button class="pill-btn" onclick="filterCategory('fitness')">Fitness</button>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="prod-grid" id="mainProductsGrid">
+        <!-- Dynamic Products injected via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- PRO STRINGING SERVICE BANNER -->
+  <section class="section tight" id="stringing">
+    <div class="wrap">
+      <div class="stringing-banner reveal">
+        <div class="stringing-content">
+          <span class="eyebrow" style="color:var(--gold-light);">Certified Customization</span>
+          <h3>Pro Stringing & Bat Knocking</h3>
+          <p>Walk into our flagship store or mail your frame. Our master certified stringers hand-string racquets (22-30
+            lbs) with Yonex/Luxilon strings and oil/knock English Willow bats to perfection.</p>
+
+          <div class="spec-options-grid">
+            <div class="spec-opt">
+              <b>60 MINS</b>
+              <span>Express Stringing</span>
+            </div>
+            <div class="spec-opt">
+              <b>BG65 / LUXILON</b>
+              <span>Pro Strings In Stock</span>
+            </div>
+            <div class="spec-opt">
+              <b>15,000+</b>
+              <span>Knocks Completed</span>
+            </div>
+          </div>
+
+          <button class="btn btn-gold" onclick="openStringingBooking()">
+            Book Stringing Slot
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="stringing-visual hide-mobile">
+          <svg viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="88" stroke="var(--gold)" stroke-width="2.5" />
+            <g stroke="var(--parchment)" stroke-width="1.2" opacity="0.8">
+              <path d="M20 60 L180 60" />
+              <path d="M12 85 L188 85" />
+              <path d="M8 110 L192 110" />
+              <path d="M12 135 L188 135" />
+              <path d="M20 160 L180 160" />
+              <path d="M55 15 L55 185" />
+              <path d="M78 12 L78 188" />
+              <path d="M100 10 L100 190" />
+              <path d="M122 12 L122 188" />
+              <path d="M145 15 L145 185" />
+            </g>
+            <circle cx="100" cy="100" r="16" fill="var(--smash-orange)" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTHORISED BRANDS STRIP (Racquets4u Style) -->
+  <section class="section tight">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Authorised Brand Retailer</span>
+          <h2>World's Top Sports Brands</h2>
+        </div>
+      </div>
+      <div class="brand-strip reveal">
+        <div class="brand-cell" onclick="filterBrand('Yonex')">Yonex</div>
+        <div class="brand-cell" onclick="filterBrand('Head')">Head</div>
+        <div class="brand-cell" onclick="filterBrand('Babolat')">Babolat</div>
+        <div class="brand-cell" onclick="filterBrand('Wilson')">Wilson</div>
+        <div class="brand-cell" onclick="filterBrand('Li-Ning')">Li-Ning</div>
+        <div class="brand-cell" onclick="filterBrand('SS')">SS</div>
+        <div class="brand-cell" onclick="filterBrand('SG')">SG</div>
+        <div class="brand-cell" onclick="filterBrand('Adidas')">Adidas</div>
+        <div class="brand-cell" onclick="filterBrand('Puma')">Puma</div>
+        <div class="brand-cell" onclick="filterBrand('Nivia')">Nivia</div>
+        <div class="brand-cell" onclick="filterBrand('Cosco')">Cosco</div>
+        <div class="brand-cell" onclick="filterBrand('Asics')">Asics</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERFORMANCE BANNER -->
+  <section class="perf-banner reveal">
+    <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&q=80&auto=format&fit=crop"
+      alt="Performance training">
+    <div class="perf-content">
+      <span class="eyebrow" style="color:var(--gold-light);">Gear Up for Victory</span>
+      <h2>Equip Your Game.</h2>
+      <p>Premium multi-sport equipment engineered for players, clubs, and sports academies — built for performance that
+        lasts season after season.</p>
+      <a href="#products" class="btn btn-gold">
+        Browse All Products
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- WHY CHHABRA SPORTS -->
+  <section class="section tight">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">The Chhabra Standard</span>
+          <h2>Why Athletes Choose Us</h2>
+        </div>
+      </div>
+      <div class="why-grid reveal">
+        <div class="why-card">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2l2.4 6.9L21 9.3l-5.4 4.4 2 7.1-5.6-4-5.6 4 2-7.1L3 9.3l6.6-.4z" />
+          </svg>
+          <h4>100% Genuine</h4>
+          <p>Official brand serial numbers & invoices direct from authorized distributors.</p>
+        </div>
+        <div class="why-card">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 12l2 2 4-4" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <h4>Specialist Checked</h4>
+          <p>Every racquet & bat is weighed and balance-checked by experts before shipping.</p>
+        </div>
+        <div class="why-card">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="10" rx="1" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <h4>Secure Checkout</h4>
+          <p>256-bit encrypted payments with UPI, Credit Cards, NetBanking & COD.</p>
+        </div>
+        <div class="why-card">
+          <svg viewBox="0 0 24 24">
+            <rect x="1" y="3" width="15" height="13" />
+            <path d="M16 8h4l3 3v5h-7V8z" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+          <h4>Express Dispatch</h4>
+          <p>Shipped within 24 hours with live tracking link delivered via SMS.</p>
+        </div>
+        <div class="why-card">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 12a9 9 0 1 1-6.2-8.56" />
+            <polyline points="21 3 21 9 15 9" />
+          </svg>
+          <h4>Easy Returns</h4>
+          <p>15-day hassle-free replacement on unused racquets & footwear.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYER TESTIMONIALS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Player Reviews</span>
+          <h2>Verified Reviews from Players</h2>
+        </div>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Ordered a Head Speed MP tennis racquet — serial code verified on the official site! The string tension
+            requested was spot on."</p>
+          <div class="testi-who">
+            <div>
+              <div class="testi-name">Vikramaditya Roy</div>
+              <div class="testi-prod">Head Speed MP Tennis Racquet</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Got my Yonex Astrox racquet strung with BG65 at 26lbs. Exceptional stringing quality and super quick
+            delivery to Bangalore."</p>
+          <div class="testi-who">
+            <div>
+              <div class="testi-name">Ananya Sharma</div>
+              <div class="testi-prod">Yonex Astrox 88D Pro</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★☆</div>
+          <p>"SS Ton English willow bat arrived oiled and pre-knocked. Grain line was straight and balance was perfect
+            for my stance."</p>
+          <div class="testi-who">
+            <div>
+              <div class="testi-name">Rohit Malhotra</div>
+              <div class="testi-prod">SS Ton Reserve Willow Bat</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--gold-light);">Racquet & Sports Club</span>
+      <h2>Join the Players Club</h2>
+      <p>Restock alerts, stringing tips & exclusive discount codes straight to your inbox.</p>
+      <form class="nl-form" id="nlForm">
+        <input type="email" placeholder="Enter your email address" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <img
+              src="https://chhabrasports.com/wp-content/uploads/2025/09/csa-acrylic-letter-cutting-scaled-e1756718460651.jpg"
+              style="height:38px; border-radius:4px;">
+            <!-- <span class="wordmark display">Chhabra Sports</span> -->
+          </div>
+          <p>India's leading online racquet and sports gear store since 1998 — supplying genuine equipment to athletes
+            nationwide.</p>
+          <div class="foot-social">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+              </svg></a>
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24">
+                <rect x="2" y="5" width="20" height="14" rx="3" />
+                <polygon points="10 9 15 12 10 15" />
+              </svg></a>
+          </div>
+        </div>
+        <div class="foot-col">
+          <h5>Sports Store</h5>
+          <a href="#products" onclick="filterCategory('badminton')">Badminton Racquets</a>
+          <a href="#products" onclick="filterCategory('tennis')">Tennis Racquets</a>
+          <a href="#products" onclick="filterCategory('cricket')">Cricket Equipment</a>
+          <a href="#products" onclick="filterCategory('shoes')">Non-Marking Shoes</a>
+          <a href="#products" onclick="filterCategory('football')">Football Boots</a>
+        </div>
+        <div class="foot-col">
+          <h5>Customer Service</h5>
+          <a href="tel:+917277252440">Phone: +91-72772-52440</a>
+          <a href="mailto:chhabrasportspatna@outlook.com">Email: chhabrasportspatna@outlook.com</a>
+          <a href="#stringing">Stringing Service</a>
+          <a href="#" onclick="openRacquetFinder()">Racquet Finder Tool</a>
+          <a href="#" onclick="openCheckout()">Track Order</a>
+        </div>
+        <div class="foot-col">
+          <h5>Store Address</h5>
+          <a href="#">L. B. Shop No. 10, Boring Road,</a>
+          <a href="#">Patna, Bihar – 800001</a>
+          <a href="#">Mon - Sat: 10:00 AM - 8:30 PM</a>
+        </div>
+        <div class="foot-col">
+          <h5>Legal & Trust</h5>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Return Policy</a>
+          <a href="#">100% Genuine Warranty</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Chhabra Sports. All Rights Reserved. Inspired by top racquet stores across India.</span>
+        <div class="pay-icons">
+          <span>UPI / GPAY</span>
+          <span>VISA</span>
+          <span>MASTERCARD</span>
+          <span>NETBANKING</span>
+          <span>COD</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MOBILE STICKY BOTTOM BAR -->
+  <div class="sticky-mobile-cta">
+    <span class="mono" style="color:var(--gold); font-size:12px;">Free Delivery over ₹2,999</span>
+    <button class="btn btn-gold" onclick="openCartDrawer()">Cart (<span id="mobileCartCount">0</span>)</button>
+  </div>
+
+  <!-- CART DRAWER MODAL -->
+  <div class="drawer-backdrop" id="cartBackdrop">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3>Your Shopping Cart</h3>
+        <button class="close-drawer" id="closeCartBtn" aria-label="Close Cart">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div class="free-ship-bar" id="freeShipProgress">
+        Add <span id="freeShipAmount">₹2,999</span> more for <strong>FREE PAN-INDIA SHIPPING!</strong>
+      </div>
+
+      <div class="cart-items" id="cartItemsContainer">
+        <!-- Cart items injected dynamically -->
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-coupon">
+          <input type="text" id="couponInput" placeholder="Promo Code (e.g. CHHABRA10)">
+          <button onclick="applyCoupon()">Apply</button>
+        </div>
+        <div class="cart-subtotal">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">₹0</span>
+        </div>
+        <button class="btn btn-smash" style="width:100%; justify-content:center; padding:16px;"
+          onclick="openCheckout()">Proceed to Checkout →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RACQUET FINDER WIZARD MODAL (Racquets4u Integration) -->
+  <div class="rf-modal" id="rfModal">
+    <div class="rf-card">
+      <button
+        style="position:absolute; right:16px; top:16px; background:none; border:none; font-size:20px; cursor:pointer;"
+        onclick="closeRacquetFinder()">✕</button>
+      <h3>⚡ Racquet Finder Wizard</h3>
+      <p style="font-size:14px; color:var(--ink-soft);">Select your playing style to find the perfect racquet frame &
+        string tension.</p>
+
+      <div class="rf-step">
+        <label
+          style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; font-weight:700; text-transform:uppercase;">1.
+          Choose Your Sport</label>
+        <div class="rf-options-grid">
+          <div class="rf-opt-btn active" onclick="selectRFOption(this, 'badminton')">
+            <h6>🏸 Badminton</h6>
+            <p>Head heavy, isometric, light 4U/5U</p>
+          </div>
+          <div class="rf-opt-btn" onclick="selectRFOption(this, 'tennis')">
+            <h6>🎾 Tennis</h6>
+            <p>Spin, control & power frames</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rf-step" style="margin-top:20px;">
+        <label
+          style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; font-weight:700; text-transform:uppercase;">2.
+          Skill Level</label>
+        <div class="rf-options-grid">
+          <div class="rf-opt-btn" onclick="selectRFOption(this, 'beginner')">
+            <h6>Beginner / Club</h6>
+            <p>Flexible shaft, easy power generation</p>
+          </div>
+          <div class="rf-opt-btn active" onclick="selectRFOption(this, 'pro')">
+            <h6>Intermediate / Pro</h6>
+            <p>Stiff flex, pinpoint smash control</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" style="width:100%; justify-content:center; margin-top:24px;"
+        onclick="submitRacquetFinder()">Find Recommended Racquets →</button>
+    </div>
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div class="search-modal" id="searchModal">
+    <div class="search-box-wrap">
+      <input type="text" class="search-input" id="searchInput"
+        placeholder="Search Yonex, Head Speed, English Willow bats..." oninput="handleSearch(this.value)">
+      <button class="close-search" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <!-- Dynamic search results -->
+    </div>
+  </div>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="qv-modal" id="qvModal">
+    <div class="qv-card" id="qvContent">
+      <!-- Quick view content injected dynamically -->
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-card">
+      <div class="checkout-head">
+        <h3>Chhabra Sports Checkout</h3>
+        <button style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;"
+          onclick="closeCheckout()">✕</button>
+      </div>
+      <div class="checkout-body">
+        <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+          <h4
+            style="font-family:'Space Mono',monospace; font-size:12px; color:var(--gold-dark); text-transform:uppercase; margin-bottom:12px;">
+            1. Shipping Details</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" required placeholder="e.g. Harpreet Singh">
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" required placeholder="+91 98765 43210">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Delivery Address *</label>
+            <input type="text" required placeholder="House/Flat No., Street, Landmark">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" required placeholder="Ludhiana / Delhi / Mumbai">
+            </div>
+            <div class="form-group">
+              <label>Pincode *</label>
+              <input type="text" required placeholder="141001">
+            </div>
+          </div>
+
+          <h4
+            style="font-family:'Space Mono',monospace; font-size:12px; color:var(--gold-dark); text-transform:uppercase; margin-top:20px; margin-bottom:12px;">
+            2. Payment Method</h4>
+          <div class="pay-options">
+            <div class="pay-option active" onclick="selectPayMethod(this, 'upi')">
+              ⚡ UPI / GPay
+            </div>
+            <div class="pay-option" onclick="selectPayMethod(this, 'card')">
+              💳 Credit/Debit Card
+            </div>
+            <div class="pay-option" onclick="selectPayMethod(this, 'cod')">
+              💵 Cash on Delivery
+            </div>
+          </div>
+
+          <div
+            style="margin-top:24px; border-top:1px solid var(--line); padding-top:18px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-family:'Space Mono',monospace; font-size:11px; color:var(--ink-soft);">Total
+                Payable:</span>
+              <div style="font-family:'Outfit',sans-serif; font-size:26px; font-weight:900; color:var(--pitch);"
+                id="checkoutPayable">₹0</div>
+            </div>
+            <button type="submit" class="btn btn-gold">Confirm Order ✓</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    // ================= MASTER PRODUCT DATABASE =================
+    const productsData = [
+      {
+        id: 'p1',
+        category: 'badminton',
+        brand: 'Yonex',
+        name: 'Astrox 88D Pro Badminton Racquet',
+        price: 14999,
+        oldPrice: 17999,
+        rating: 4.9,
+        reviews: 214,
+        tag: 'BESTSELLER',
+        specs: '4U / G5 · Head Heavy · Stiff Shaft · Pre-String Option',
+        img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p2',
+        category: 'tennis',
+        brand: 'Head',
+        name: 'Head Speed MP 2024 Tennis Racquet',
+        price: 18999,
+        oldPrice: 22499,
+        rating: 4.9,
+        reviews: 189,
+        tag: 'PRO CHOICE',
+        specs: '300g · 100 sq.in · Auxetic 2.0 Tech · Unstrung Frame',
+        img: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p3',
+        category: 'cricket',
+        brand: 'SS',
+        name: 'Ton Reserve Edition English Willow Bat',
+        price: 12499,
+        oldPrice: 15999,
+        rating: 5.0,
+        reviews: 312,
+        tag: 'BESTSELLER',
+        specs: 'Grade 1 Willow · Weight 1180g · Hand Oiled & Knocked',
+        img: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p4',
+        category: 'badminton',
+        brand: 'Li-Ning',
+        name: 'Halbertec 7000 Badminton Racquet',
+        price: 13599,
+        oldPrice: 22990,
+        rating: 4.8,
+        reviews: 96,
+        tag: 'NEW',
+        specs: '3U / G5 · Even Balance · High Elasticity Carbon Shaft',
+        img: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p5',
+        category: 'shoes',
+        brand: 'Asics',
+        name: 'Gel-Rocket 11 Non-Marking Indoor Shoes',
+        price: 5499,
+        oldPrice: 6999,
+        rating: 4.8,
+        reviews: 145,
+        tag: 'BESTSELLER',
+        specs: 'Gel Cushioning · Trusstic Tech · Non-Marking Gum Sole',
+        img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p6',
+        category: 'tennis',
+        brand: 'Babolat',
+        name: 'Pure Drive 2024 Tennis Racquet',
+        price: 19499,
+        oldPrice: 23999,
+        rating: 4.9,
+        reviews: 167,
+        tag: 'POPULAR',
+        specs: '300g · FSI Power Tech · High Power & Explosive Feel',
+        img: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p7',
+        category: 'football',
+        brand: 'Adidas',
+        name: 'Predator Elite FG Football Boots',
+        price: 8999,
+        oldPrice: 11499,
+        rating: 4.7,
+        reviews: 342,
+        tag: 'SALE',
+        specs: 'Controlframe 2.0 · Moulded Studs · HybridTouch Upper',
+        img: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p8',
+        category: 'badminton',
+        brand: 'RSL',
+        name: 'Tourney No.1 Feather Shuttlecocks (12 Pack)',
+        price: 999,
+        oldPrice: 1299,
+        rating: 4.9,
+        reviews: 410,
+        tag: 'BESTSELLER',
+        specs: 'Grade A Goose Feather · Speed 77 · Tournament Class',
+        img: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p9',
+        category: 'cricket',
+        brand: 'SG',
+        name: 'Test Players Wicket Keeping Gloves',
+        price: 3299,
+        oldPrice: 3999,
+        rating: 4.6,
+        reviews: 84,
+        tag: null,
+        specs: 'Premium Leather · Rubberized Palm Grip · Brass Thimbles',
+        img: 'https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=500&q=80&auto=format&fit=crop'
+      },
+      {
+        id: 'p10',
+        category: 'fitness',
+        brand: 'Cosco',
+        name: 'Adjustable Rubber Dumbbell Set 20kg Kit',
+        price: 4499,
+        oldPrice: 5999,
+        rating: 4.7,
+        reviews: 78,
+        tag: null,
+        specs: 'Chrome Bar + Collars · Heavy Duty Rubber Coated Plates',
+        img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80&auto=format&fit=crop',
+        img2: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80&auto=format&fit=crop'
+      }
+    ];
+
+    // STATE MANAGEMENT
+    let cart = [];
+    let wishlist = new Set();
+    let discountAmount = 0;
+    let currentFilter = 'all';
+
+    // INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(productsData);
+      setupScrollReveal();
+      setupEventListeners();
+    });
+
+    // RENDER PRODUCTS GRID
+    function renderProducts(list) {
+      const container = document.getElementById('mainProductsGrid');
+      const countEl = document.getElementById('catalogCount');
+      countEl.textContent = `Showing ${list.length} products`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+        <h3 style="font-family:'Outfit',sans-serif; font-size:24px; color:var(--ink-soft); font-weight:800;">No items found in this category</h3>
+        <p style="margin-top:8px; font-size:14px;">Try selecting another sport or brand filter.</p>
+      </div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(p => `
+    <div class="prod-card">
+      <div class="prod-media" onclick="openQuickView('${p.id}')">
+        ${p.tag ? `<div class="prod-tag ${p.tag.toLowerCase()}">${p.tag}</div>` : ''}
+        <button class="prod-wish ${wishlist.has(p.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist('${p.id}')" aria-label="Add to wishlist">
+          <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </button>
+        <img class="primary" src="${p.img}" alt="${p.name}">
+        <img class="secondary" src="${p.img2}" alt="${p.name}">
+        <button class="quick-add-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">+ Add to Cart</button>
+      </div>
+      <div class="prod-info">
+        <div>
+          <div class="prod-brand">${p.brand}</div>
+          <div class="prod-name" onclick="openQuickView('${p.id}')">${p.name}</div>
+          <span class="spec-chip">${p.specs}</span>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="prod-rating">
+            <span class="stars">${renderStars(p.rating)}</span>
+            <span class="rev-count">(${p.reviews})</span>
+          </div>
+          <div class="prod-price">
+            <span class="price-now">₹${p.price.toLocaleString('en-IN')}</span>
+            ${p.oldPrice ? `<span class="price-old">₹${p.oldPrice.toLocaleString('en-IN')}</span><span class="price-off">-${Math.round((1 - p.price / p.oldPrice) * 100)}%</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function renderStars(r) {
+      const full = Math.floor(r);
+      const half = r % 1 !== 0;
+      return '★'.repeat(full) + (half ? '☆' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
+    }
+
+    // FILTER BY CATEGORY
+    function filterCategory(cat) {
+      currentFilter = cat;
+
+      document.querySelectorAll('.filter-pills .pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(cat) || (cat === 'all' && btn.textContent.includes('All')));
+      });
+
+      if (cat === 'all') {
+        renderProducts(productsData);
+      } else {
+        const filtered = productsData.filter(p => p.category === cat);
+        renderProducts(filtered);
+      }
+    }
+
+    // FILTER BY BRAND
+    function filterBrand(brandName) {
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      const filtered = productsData.filter(p => p.brand.toLowerCase() === brandName.toLowerCase());
+      renderProducts(filtered);
+      showToast(`Filtering gear by brand: ${brandName}`);
+    }
+
+    // CART FUNCTIONS
+    function addToCart(productId) {
+      const item = productsData.find(p => p.id === productId);
+      if (!item) return;
+
+      const existing = cart.find(c => c.id === productId);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ ...item, qty: 1 });
+      }
+
+      updateCartUI();
+      showToast(`Added ${item.name} to your cart!`);
+      openCartDrawer();
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(c => c.id !== productId);
+      updateCartUI();
+    }
+
+    function changeQty(productId, delta) {
+      const item = cart.find(c => c.id === productId);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+          removeFromCart(productId);
+        } else {
+          updateCartUI();
+        }
+      }
+    }
+
+    function updateCartUI() {
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartCount').textContent = totalCount;
+      document.getElementById('mobileCartCount').textContent = totalCount;
+
+      const cartContainer = document.getElementById('cartItemsContainer');
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `
+      <div style="text-align:center; padding:40px 10px;">
+        <svg style="width:48px; height:48px; stroke:var(--line); fill:none; margin:0 auto 12px;" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <p style="font-family:'Space Mono',monospace; font-size:13px; color:var(--ink-soft);">Your cart is currently empty.</p>
+      </div>`;
+      } else {
+        cartContainer.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img src="${item.img}" alt="${item.name}">
+        <div class="cart-item-info">
+          <div class="cart-item-title">${item.name}</div>
+          <div class="cart-item-meta">${item.brand} · ${item.specs.split('·')[0]}</div>
+          <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+            <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+      }
+
+      const rawSubtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const finalSubtotal = Math.max(0, rawSubtotal - discountAmount);
+
+      document.getElementById('cartSubtotal').textContent = `₹${finalSubtotal.toLocaleString('en-IN')}`;
+      document.getElementById('checkoutPayable').textContent = `₹${finalSubtotal.toLocaleString('en-IN')}`;
+
+      const target = 2999;
+      const freeShipBar = document.getElementById('freeShipProgress');
+      if (rawSubtotal >= target) {
+        freeShipBar.innerHTML = '🎉 You unlocked <strong>FREE EXPRESS PAN-INDIA SHIPPING!</strong>';
+      } else {
+        const diff = target - rawSubtotal;
+        freeShipBar.innerHTML = `Add <span>₹${diff.toLocaleString('en-IN')}</span> more for <strong>FREE PAN-INDIA SHIPPING!</strong>`;
+      }
+    }
+
+    function applyCoupon() {
+      const code = document.getElementById('couponInput').value.trim().toUpperCase();
+      if (code === 'CHHABRA10') {
+        discountAmount = 500;
+        updateCartUI();
+        showToast('Promo Code CHHABRA10 applied! ₹500 Discount');
+      } else {
+        showToast('Invalid Coupon Code! Try "CHHABRA10"');
+      }
+    }
+
+    // WISHLIST FUNCTION
+    function toggleWishlist(productId) {
+      if (wishlist.has(productId)) {
+        wishlist.delete(productId);
+        showToast('Removed from your wishlist.');
+      } else {
+        wishlist.add(productId);
+        showToast('Saved to your wishlist! ❤️');
+      }
+      document.getElementById('wishCount').textContent = wishlist.size;
+      renderProducts(productsData);
+    }
+
+    // QUICK VIEW MODAL
+    function openQuickView(productId) {
+      const p = productsData.find(item => item.id === productId);
+      if (!p) return;
+
+      const qvContent = document.getElementById('qvContent');
+      qvContent.innerHTML = `
+    <button class="close-qv" onclick="closeQuickView()">✕</button>
+    <div class="qv-media">
+      <img src="${p.img}" alt="${p.name}">
+    </div>
+    <div class="qv-details">
+      <div>
+        <span class="eyebrow">${p.brand} Official</span>
+        <h2 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:26px; margin:8px 0 14px;">${p.name}</h2>
+        <p style="font-size:14px; color:var(--ink-soft); line-height:1.6; margin-bottom:16px;">${p.specs}</p>
+        <div style="font-family:'Space Mono',monospace; font-size:24px; font-weight:700; color:var(--pitch); margin-bottom:20px;">
+          ₹${p.price.toLocaleString('en-IN')}
+          ${p.oldPrice ? `<span style="font-size:14px; color:var(--ink-soft); text-decoration:line-through; margin-left:8px;">₹${p.oldPrice.toLocaleString('en-IN')}</span>` : ''}
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-gold" style="width:100%; justify-content:center; padding:16px; margin-bottom:10px;" onclick="addToCart('${p.id}'); closeQuickView();">Add to Cart</button>
+        <button class="btn btn-outline" style="width:100%; justify-content:center; padding:14px; color:var(--ink);" onclick="closeQuickView()">Continue Shopping</button>
+      </div>
+    </div>
+  `;
+      document.getElementById('qvModal').classList.add('open');
+    }
+
+    function closeQuickView() {
+      document.getElementById('qvModal').classList.remove('open');
+    }
+
+    // RACQUET FINDER WIZARD (Racquets4u Feature)
+    function openRacquetFinder() {
+      document.getElementById('rfModal').classList.add('open');
+    }
+    function closeRacquetFinder() {
+      document.getElementById('rfModal').classList.remove('open');
+    }
+    function selectRFOption(el, val) {
+      const parent = el.parentElement;
+      parent.querySelectorAll('.rf-opt-btn').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function submitRacquetFinder() {
+      closeRacquetFinder();
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+      filterCategory('badminton');
+      showToast('Showing Racquet Finder recommended models!');
+    }
+
+    // SEARCH DRAWER
+    function openSearch() {
+      document.getElementById('searchModal').classList.add('open');
+      document.getElementById('searchInput').focus();
+    }
+
+    function closeSearch() {
+      document.getElementById('searchModal').classList.remove('open');
+    }
+
+    function handleSearch(query) {
+      const resultsContainer = document.getElementById('searchResults');
+      if (!query.trim()) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const matches = productsData.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.brand.toLowerCase().includes(query.toLowerCase()) ||
+        p.category.toLowerCase().includes(query.toLowerCase())
+      );
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `<div style="color:#fff; padding:14px;">No matching sports gear found for "${query}"</div>`;
+      } else {
+        resultsContainer.innerHTML = matches.map(p => `
+      <div class="search-result-item" onclick="openQuickView('${p.id}'); closeSearch();">
+        <img src="${p.img}" alt="${p.name}">
+        <div>
+          <div style="font-weight:700; font-size:14px;">${p.name}</div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; color:var(--gold-dark); font-weight:700;">₹${p.price.toLocaleString('en-IN')}</div>
+        </div>
+      </div>
+    `).join('');
+      }
+    }
+
+    // CHECKOUT & ORDER HANDLING
+    function openCheckout() {
+      if (cart.length === 0) {
+        showToast('Please add items to your cart before checkout!');
+        return;
+      }
+      closeCartDrawer();
+      document.getElementById('checkoutModal').classList.add('open');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('open');
+    }
+
+    function selectPayMethod(el, method) {
+      document.querySelectorAll('.pay-option').forEach(opt => opt.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function handlePlaceOrder(e) {
+      e.preventDefault();
+      const orderId = 'CHS-' + Math.floor(100000 + Math.random() * 900000);
+      closeCheckout();
+      cart = [];
+      updateCartUI();
+      showToast(`🎉 Order Placed Successfully! Order ID: ${orderId}`);
+      alert(`Thank you for shopping at Chhabra Sports!\n\nYour Order #${orderId} has been confirmed. You will receive dispatch updates via SMS & Email.`);
+    }
+
+    // INTERACTIVE DIALOGS
+    function openStringingBooking() {
+      alert("Pro Stringing & Bat Knocking Booking\n\nPlease call our Patna workshop at +91-72772-52440 or WhatsApp us to schedule your 60-minute express stringing slot.");
+    }
+
+    // DRAWER TOGGLES
+    function openCartDrawer() {
+      document.getElementById('cartBackdrop').classList.add('open');
+    }
+    function closeCartDrawer() {
+      document.getElementById('cartBackdrop').classList.remove('open');
+    }
+
+    function closeMobileDrawer() {
+      document.getElementById('mobileDrawer').classList.remove('open');
+    }
+
+    // EVENT LISTENERS SETUP
+    function setupEventListeners() {
+      document.getElementById('cartChipBtn').addEventListener('click', openCartDrawer);
+      document.getElementById('closeCartBtn').addEventListener('click', closeCartDrawer);
+      document.getElementById('cartBackdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'cartBackdrop') closeCartDrawer();
+      });
+
+      document.getElementById('searchBtn').addEventListener('click', openSearch);
+
+      const mobileDrawer = document.getElementById('mobileDrawer');
+      document.getElementById('hamburgerBtn').addEventListener('click', () => mobileDrawer.classList.add('open'));
+      document.getElementById('closeDrawer').addEventListener('click', () => mobileDrawer.classList.remove('open'));
+      document.getElementById('mobileScrim').addEventListener('click', () => mobileDrawer.classList.remove('open'));
+
+      document.getElementById('nlForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast('Subscribed to Chhabra Sports Club! ✉️');
+        e.target.reset();
+      });
+    }
+
+    // TOAST SYSTEM
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span>${message}</span>
+  `;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 50);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 3000);
+    }
+
+    // SCROLL REVEAL ANIMATION
+    function setupScrollReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+  </script>
+</body>
+
+</html>

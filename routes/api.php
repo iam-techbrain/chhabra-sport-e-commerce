@@ -1,0 +1,39 @@
+<?php
+
+use App\Http\Controllers\Api\AttributeController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
+use Illuminate\Support\Facades\Route;
+
+// Product Endpoints
+Route::get('/products', [ProductController::class, 'index']);
+Route::post('/products', [ProductController::class, 'store']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
+Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+// Category Endpoints
+Route::get('/categories', [ProductController::class, 'categories']);
+Route::post('/categories', [ProductController::class, 'storeCategory']);
+Route::delete('/categories/{id}', [ProductController::class, 'destroyCategory']);
+
+// Brand Endpoints
+Route::get('/brands', [ProductController::class, 'brands']);
+Route::post('/brands', [ProductController::class, 'storeBrand']);
+Route::delete('/brands/{id}', [ProductController::class, 'destroyBrand']);
+
+// Tag Endpoints
+Route::get('/tags', [ProductController::class, 'tags']);
+Route::post('/tags', [ProductController::class, 'storeTag']);
+Route::delete('/tags/{id}', [ProductController::class, 'destroyTag']);
+
+// Attribute & Variable Endpoints (Database Persisted)
+Route::get('/attributes', [AttributeController::class, 'index']);
+Route::post('/attributes', [AttributeController::class, 'store']);
+Route::post('/attributes/{id}/values', [AttributeController::class, 'addValue']);
+Route::delete('/attributes/{id}', [AttributeController::class, 'destroy']);
+Route::delete('/attribute-values/{id}', [AttributeController::class, 'destroyValue']);
+
+// Order Endpoints
+Route::get('/orders', [OrderController::class, 'index']);
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
+Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);

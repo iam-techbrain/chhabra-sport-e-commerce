@@ -46,7 +46,7 @@
         <!-- HEADER ACTIONS WITH ADMIN PANEL, MY ORDERS & LOGIN LINKS -->
         <div class="header-actions">
 
-          <a href="#" class="cart-chip" @click.prevent="$emit('navigate', user ? 'account' : 'auth')" style="text-decoration: none;">
+          <a href="#" class="cart-chip hide-mobile" @click.prevent="$emit('navigate', user ? 'account' : 'auth')" style="text-decoration: none;">
             <span v-if="user">👤 {{ user.name }}</span>
             <span v-else>👤 LOGIN / MY ORDERS</span>
           </a>
@@ -72,7 +72,7 @@
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            <span>CART</span> (<span>{{ cartCount }}</span>)
+            <span><!-- Cart --></span> (<span>{{ cartCount }}</span>)
           </button>
         </div>
       </div>
@@ -100,7 +100,8 @@
         <a class="m-link" href="#" @click="$emit('navigate', 'about'); mobileMenuOpen = false">About Us <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'contact'); mobileMenuOpen = false">Contact Us <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'admin'); mobileMenuOpen = false">⚙️ Admin Control Panel <span>›</span></a>
-        <a class="m-link" href="#" @click="$emit('navigate', 'auth'); mobileMenuOpen = false">Login / Register <span>›</span></a>
+        <a class="m-link" href="#" v-if="user" @click="$emit('navigate', 'account'); mobileMenuOpen = false">👤 {{ user.name }} (My Account) <span>›</span></a>
+        <a class="m-link" href="#" v-else @click="$emit('navigate', 'auth'); mobileMenuOpen = false">👤 Login / Register <span>›</span></a>
       </div>
     </div>
   </div>

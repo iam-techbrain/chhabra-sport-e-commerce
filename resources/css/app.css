@@ -2397,8 +2397,9 @@
       }
 
       nav.primary,
-      .header-actions .icon-btn.hide-mobile {
-        display: none;
+      .header-actions .hide-mobile,
+      .hide-mobile {
+        display: none !important;
       }
 
       .hamburger {

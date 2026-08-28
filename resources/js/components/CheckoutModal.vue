@@ -10,23 +10,23 @@
         <form @submit.prevent="submitCheckout">
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" v-model="form.customer_name" required placeholder="e.g. Rahul Sharma">
+            <input type="text" v-model="form.customer_name" required maxlength="50" placeholder="e.g. Rahul Sharma">
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label>Phone Number</label>
-              <input type="tel" v-model="form.customer_phone" required placeholder="+91 98765 43210">
+              <input type="tel" v-model="form.customer_phone" required maxlength="15" placeholder="+91 98765 43210">
             </div>
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" v-model="form.customer_email" required placeholder="rahul@example.com">
+              <input type="email" v-model="form.customer_email" required maxlength="80" placeholder="rahul@example.com">
             </div>
           </div>
 
           <div class="form-group">
             <label>Delivery Address & Pincode</label>
-            <textarea rows="2" v-model="form.address" required placeholder="Flat / House No, Street Name, City, Pincode"></textarea>
+            <textarea rows="2" v-model="form.address" required maxlength="300" placeholder="Flat / House No, Street Name, City, Pincode"></textarea>
           </div>
 
           <div class="form-group">

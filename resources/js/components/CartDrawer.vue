@@ -38,7 +38,7 @@
       <!-- Cart Footer -->
       <div class="cart-footer" v-if="cart.length > 0">
         <div class="cart-coupon">
-          <input type="text" v-model="couponCode" placeholder="Enter Promo Code (CHHABRA10)">
+          <input type="text" v-model="couponCode" maxlength="20" placeholder="Enter Promo Code (CHHABRA10)">
           <button @click="applyPromo">APPLY</button>
         </div>
 

@@ -29,24 +29,24 @@
             <form @submit.prevent="handleSubmit" class="contact-form">
               <div class="form-row-2">
                 <div class="field-wrap">
-                  <input type="text" v-model="form.name" placeholder="Your Name *" required />
+                  <input type="text" v-model="form.name" placeholder="Your Name *" required maxlength="50" />
                 </div>
                 <div class="field-wrap">
-                  <input type="email" v-model="form.email" placeholder="Your Email *" required />
+                  <input type="email" v-model="form.email" placeholder="Your Email *" required maxlength="80" />
                 </div>
               </div>
 
               <div class="form-row-2">
                 <div class="field-wrap">
-                  <input type="text" v-model="form.phone" placeholder="Phone Number" />
+                  <input type="text" v-model="form.phone" placeholder="Phone Number" maxlength="15" />
                 </div>
                 <div class="field-wrap">
-                  <input type="text" v-model="form.company" placeholder="Company" />
+                  <input type="text" v-model="form.company" placeholder="Company" maxlength="60" />
                 </div>
               </div>
 
               <div class="field-wrap">
-                <textarea v-model="form.message" rows="5" placeholder="Your Message *" required></textarea>
+                <textarea v-model="form.message" rows="5" placeholder="Your Message *" required maxlength="500"></textarea>
               </div>
 
               <button type="submit" class="btn btn-gold">ASK A QUESTION →</button>

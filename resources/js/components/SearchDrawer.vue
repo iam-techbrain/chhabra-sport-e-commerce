@@ -5,6 +5,7 @@
         type="text" 
         class="search-input" 
         v-model="query" 
+        maxlength="50"
         placeholder="Search Yonex Astrox, Head Speed, SS Willow..." 
         ref="searchInput"
       >

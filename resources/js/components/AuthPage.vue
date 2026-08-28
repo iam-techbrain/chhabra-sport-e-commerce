@@ -15,6 +15,7 @@
                   v-model="loginForm.email" 
                   placeholder="abc@gmail.com" 
                   required 
+                  maxlength="80"
                 />
               </div>
 
@@ -27,6 +28,7 @@
                     placeholder="••••••••••••" 
                     value="123456"
                     required 
+                    maxlength="50"
                   />
                   <button type="button" class="eye-toggle" @click="showPassword = !showPassword">
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
@@ -65,17 +67,17 @@
             <form v-else @submit.prevent="handleRegister" class="auth-form">
               <div class="form-group">
                 <label>Full Name <span class="required">*</span></label>
-                <input type="text" v-model="registerForm.name" placeholder="Enter your full name" required />
+                <input type="text" v-model="registerForm.name" placeholder="Enter your full name" required maxlength="50" />
               </div>
 
               <div class="form-group">
                 <label>Email address <span class="required">*</span></label>
-                <input type="email" v-model="registerForm.email" placeholder="Enter your email" required />
+                <input type="email" v-model="registerForm.email" placeholder="Enter your email" required maxlength="80" />
               </div>
 
               <div class="form-group">
                 <label>Password <span class="required">*</span></label>
-                <input type="password" v-model="registerForm.password" placeholder="Choose a password" required />
+                <input type="password" v-model="registerForm.password" placeholder="Choose a password" required maxlength="50" />
               </div>
 
               <button type="submit" class="btn btn-gold btn-full">CREATE ACCOUNT →</button>

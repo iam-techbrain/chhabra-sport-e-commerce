@@ -1,29 +1,32 @@
 <template>
-  <section class="section tight category-section-pro" id="categories">
+  <section class="section category-section-pro" id="categories">
     <div class="wrap">
-      <!-- PROFESSIONAL COMPACT HEADER -->
-      <div class="sec-head" style="margin-bottom: 22px;">
+      <!-- PROFESSIONAL HEADER -->
+      <div class="sec-head" style="margin-bottom: 28px;">
         <div>
-          <span class="eyebrow" style="letter-spacing:1.5px; color:#E3C174; font-weight:700; font-size:11px;">SHOP BY SPORT & CATEGORY</span>
-          <h2 style="font-size: 26px; font-weight:800; margin-top:3px; color:#0F172A; font-family:'Outfit',sans-serif;">Explore Categories</h2>
+          <span class="eyebrow" style="letter-spacing:1.5px; color:#D97706; font-weight:700; font-size:11px;">SHOP BY SPORT & CATEGORY</span>
+          <h2 style="font-size: 28px; font-weight:800; margin-top:4px; color:#0F172A; font-family:'Outfit',sans-serif; letter-spacing:-0.5px;">Explore Categories</h2>
         </div>
-        <a href="#products" class="sec-link" @click.prevent="$emit('select-category', 'all')" style="font-size:13px; font-weight:700; color:#0F172A;">View Complete Catalog →</a>
+        <a href="#products" class="sec-link" @click.prevent="$emit('select-category', 'all')" style="font-size:13.5px; font-weight:700; color:#0F172A; display:inline-flex; align-items:center; gap:6px;">
+          View Complete Catalog 
+          <span style="font-size:15px; transition:transform 0.2s;">→</span>
+        </a>
       </div>
 
-      <!-- COMPACT HIGH-END CATEGORY GRID -->
+      <!-- PREMIUM FLEXIBLE CATEGORY GRID -->
       <div v-if="categories.length > 0" class="pro-cat-grid">
         <div 
           v-for="cat in categories" 
-          :key="cat.id || cat.slug" 
+          :key="cat.id || cat.slug || cat.name" 
           class="pro-cat-card" 
-          @click="$emit('select-category', cat.slug)"
+          @click="$emit('select-category', cat.slug || cat.name.toLowerCase())"
         >
-          <img :src="getCategoryImg(cat.slug)" :alt="cat.name" class="pro-cat-bg" />
+          <img :src="getCategoryImg(cat.slug || cat.name)" :alt="cat.name" class="pro-cat-bg" />
           <div class="pro-cat-overlay">
             <div class="pro-cat-top">
-              <span class="cat-icon-badge">{{ cat.icon || '📦' }}</span>
+              <span class="cat-icon-badge">{{ cat.icon || getFallbackIcon(cat.name) }}</span>
               <div class="arrow-pill">
-                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
@@ -31,7 +34,7 @@
             </div>
             <div class="pro-cat-bottom">
               <h3 class="pro-cat-name">{{ cat.name }}</h3>
-              <span class="pro-cat-sub">Shop Collection</span>
+              <span class="pro-cat-sub">Shop Collection →</span>
             </div>
           </div>
         </div>
@@ -39,9 +42,9 @@
 
       <!-- EMPTY STATE -->
       <div v-else class="empty-categories">
-        <div style="font-size:28px; margin-bottom:6px;">📁</div>
-        <h3 style="font-family:'Outfit',sans-serif; color:#0F172A; font-weight:800; font-size:16px;">No Categories Found</h3>
-        <p style="font-size:12.5px; color:#64748B; margin-top:2px;">Add new categories from Admin Dashboard.</p>
+        <div style="font-size:32px; margin-bottom:8px;">📁</div>
+        <h3 style="font-family:'Outfit',sans-serif; color:#0F172A; font-weight:800; font-size:17px;">No Categories Found</h3>
+        <p style="font-size:13px; color:#64748B; margin-top:2px;">Add new categories from Admin Dashboard.</p>
       </div>
     </div>
   </section>
@@ -55,17 +58,28 @@ defineEmits(['select-category']);
 
 const categories = ref([]);
 
-const catImages = {
-  badminton: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=500&q=80&auto=format&fit=crop',
-  tennis: 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=500&q=80&auto=format&fit=crop',
-  cricket: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=500&q=80&auto=format&fit=crop',
-  shoes: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80&auto=format&fit=crop',
-  football: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=500&q=80&auto=format&fit=crop',
-  fitness: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80&auto=format&fit=crop'
-};
+function getCategoryImg(str) {
+  if (!str) return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop';
+  const s = str.toLowerCase();
+  if (s.includes('badminton')) return 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=600&q=80&auto=format&fit=crop';
+  if (s.includes('cricket')) return 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=600&q=80&auto=format&fit=crop';
+  if (s.includes('shoe') || s.includes('footwear') || s.includes('spike')) return 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop';
+  if (s.includes('foot') || s.includes('soccer')) return 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&q=80&auto=format&fit=crop';
+  if (s.includes('fit') || s.includes('gym')) return 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop';
+  if (s.includes('tennis') || s.includes('racquet')) return 'https://images.unsplash.com/photo-1595435742656-5272d0b3fa82?w=600&q=80&auto=format&fit=crop';
+  return 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&q=80&auto=format&fit=crop';
+}
 
-function getCategoryImg(slug) {
-  return catImages[slug] || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80&auto=format&fit=crop';
+function getFallbackIcon(str) {
+  if (!str) return '📦';
+  const s = str.toLowerCase();
+  if (s.includes('badminton')) return '🏸';
+  if (s.includes('cricket')) return '🏏';
+  if (s.includes('shoe') || s.includes('spike')) return '👟';
+  if (s.includes('foot') || s.includes('soccer')) return '⚽';
+  if (s.includes('fit') || s.includes('gym')) return '🏋️';
+  if (s.includes('tennis')) return '🎾';
+  return '🏆';
 }
 
 onMounted(async () => {
@@ -82,63 +96,51 @@ onMounted(async () => {
 
 <style scoped>
 .category-section-pro {
-  padding: 35px 0 25px;
+  padding: 40px 0 30px;
 }
 
 .pro-cat-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-@media (min-width: 640px) {
-  .pro-cat-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .pro-cat-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
 }
 
 .pro-cat-card {
   position: relative;
-  height: 140px;
-  border-radius: 14px;
+  height: 185px;
+  border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
   background: #0F172A;
-  border: 1px solid rgba(227, 193, 116, 0.18);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pro-cat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.01);
   border-color: #E3C174;
-  box-shadow: 0 12px 25px rgba(227, 193, 116, 0.25);
+  box-shadow: 0 20px 35px -10px rgba(227, 193, 116, 0.3);
 }
 
 .pro-cat-bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: brightness(0.65) contrast(1.08);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: brightness(0.65) contrast(1.1);
 }
 
 .pro-cat-card:hover .pro-cat-bg {
-  transform: scale(1.1);
+  transform: scale(1.12);
   filter: brightness(0.75) contrast(1.15);
 }
 
 .pro-cat-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.88) 100%);
-  padding: 14px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.82) 60%, rgba(15, 23, 42, 0.95) 100%);
+  padding: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -151,74 +153,77 @@ onMounted(async () => {
 }
 
 .cat-icon-badge {
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(8px);
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .arrow-pill {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #FFFFFF;
-  transition: all 0.3s ease;
+  transition: all 0.35s ease;
 }
 
 .pro-cat-card:hover .arrow-pill {
   background: #E3C174;
   border-color: #E3C174;
   color: #0A1B15;
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .pro-cat-bottom {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .pro-cat-name {
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 18px;
   color: #FFFFFF;
   margin: 0;
-  letter-spacing: -0.2px;
-  line-height: 1.2;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
 }
 
 .pro-cat-sub {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #E3C174;
-  opacity: 0.85;
-  transition: opacity 0.2s;
-  letter-spacing: 0.2px;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
 }
 
 .pro-cat-card:hover .pro-cat-sub {
   opacity: 1;
+  color: #FFFFFF;
+  transform: translateX(2px);
 }
 
 .empty-categories {
   text-align: center;
-  padding: 35px 20px;
+  padding: 40px 20px;
   background: #F8FAFC;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 2px dashed #E2E8F0;
   margin-top: 15px;
 }

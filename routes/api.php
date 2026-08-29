@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AttributeController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RazorpayController;
+use App\Http\Controllers\Api\ContactController;
 use Illuminate\Support\Facades\Route;
 
 // Auth Endpoints (Persisted in DB users table)
@@ -51,4 +52,11 @@ Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 // Razorpay Payment Endpoints
 Route::post('/razorpay/create-order', [RazorpayController::class, 'createOrder']);
 Route::post('/razorpay/verify-payment', [RazorpayController::class, 'verifyPayment']);
+
+// Contact Us Form Endpoints (Saved to DB)
+Route::post('/contact', [ContactController::class, 'store']);
+Route::get('/contact-messages', [ContactController::class, 'index']);
+Route::put('/contact-messages/{id}/status', [ContactController::class, 'updateStatus']);
+Route::delete('/contact-messages/{id}', [ContactController::class, 'destroy']);
+
 

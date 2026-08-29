@@ -359,9 +359,24 @@ function handleNavigate(tab) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function handleAdminAddProduct(newProd) {
-  allProducts.value.unshift(newProd);
-  showToast(`Product "${newProd.name}" is now live in store! 🎉`);
+function handleAdminAddProduct(savedProd) {
+  if (!savedProd) return;
+  const targetId = String(savedProd.id || '');
+  const targetCode = String(savedProd.code_id || '');
+
+  const idx = allProducts.value.findIndex(p => {
+    if (targetId && String(p.id) === targetId) return true;
+    if (targetCode && (String(p.code_id) === targetCode || getItemId(p) === targetCode)) return true;
+    return false;
+  });
+
+  if (idx !== -1) {
+    allProducts.value[idx] = { ...allProducts.value[idx], ...savedProd };
+    showToast(`Product "${savedProd.name}" updated successfully! ✏️🎉`);
+  } else {
+    allProducts.value.unshift(savedProd);
+    showToast(`Product "${savedProd.name}" is now live in store! 🎉`);
+  }
 }
 
 function handleAdminDeleteProduct(prodId) {

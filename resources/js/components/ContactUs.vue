@@ -49,7 +49,9 @@
                 <textarea v-model="form.message" rows="5" placeholder="Your Message *" required maxlength="500"></textarea>
               </div>
 
-              <button type="submit" class="btn btn-gold">ASK A QUESTION →</button>
+              <button type="submit" class="btn btn-gold" :disabled="isSubmitting">
+                {{ isSubmitting ? 'SENDING MESSAGE... ⌛' : 'ASK A QUESTION →' }}
+              </button>
             </form>
           </div>
         </div>
@@ -79,10 +81,10 @@
             <div class="social-share">
               <span>Share:</span>
               <div class="social-icons">
-                <a href="#" aria-label="Facebook">
+                <a href="https://www.facebook.com/chhabrasports/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--pitch-dark)"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                 </a>
-                <a href="#" aria-label="Instagram">
+                <a href="https://www.instagram.com/chhabrasportsagencies/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--pitch-dark)"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
                 </a>
               </div>
@@ -96,6 +98,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 const emit = defineEmits(['show-toast']);
 
@@ -107,9 +110,25 @@ const form = ref({
   message: ''
 });
 
-function handleSubmit() {
-  emit('show-toast', `Thank you ${form.value.name}! Your message has been sent to Chhabra Sports.`);
-  form.value = { name: '', email: '', phone: '', company: '', message: '' };
+const isSubmitting = ref(false);
+
+async function handleSubmit() {
+  if (!form.value.name || !form.value.email || !form.value.message) return;
+  isSubmitting.value = true;
+
+  try {
+    const res = await axios.post('/api/contact', form.value);
+    if (res.data && res.data.success) {
+      emit('show-toast', res.data.message || `Thank you ${form.value.name}! Your message has been sent.`);
+      form.value = { name: '', email: '', phone: '', company: '', message: '' };
+    } else {
+      emit('show-toast', 'Error submitting message. Please try again.');
+    }
+  } catch (err) {
+    emit('show-toast', err.response?.data?.message || 'Failed to submit contact message.');
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 function showFaqToast() {

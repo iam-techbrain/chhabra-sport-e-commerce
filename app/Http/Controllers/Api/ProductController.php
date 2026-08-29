@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Tag;
 use App\Models\Product;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -132,7 +133,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'code_id' => 'required|string',
             'category' => 'required|string',
-            'brand' => 'required|string',
+            'brand' => 'nullable|string',
             'price' => 'required|numeric'
         ]);
 
@@ -143,28 +144,49 @@ class ProductController extends Controller
             $inStock = $request->stockStatus === 'In stock';
         }
 
-        $product = Product::updateOrCreate(
-            ['code_id' => $request->code_id],
-            [
-                'name' => $request->name,
-                'category' => $request->category,
-                'brand' => $request->brand,
-                'price' => $request->price,
-                'old_price' => $request->old_price ?? ($request->price + 1500),
-                'rating' => $request->rating ?? 5.0,
-                'reviews' => $request->reviews ?? 1,
-                'tag' => $request->tag ?? 'NEW',
-                'specs' => $request->specs ?? '',
-                'img' => $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
-                'in_stock' => $inStock,
-                'is_variable' => $request->isVariable ?? $request->is_variable ?? false,
-                'variations' => $request->variations ?? []
-            ]
-        );
+        $brandName = $request->filled('brand') ? trim($request->brand) : 'Generic';
+
+        $product = null;
+
+        // 1. Search by DB primary key 'id' if provided
+        if ($request->has('id') && !empty($request->id) && is_numeric($request->id)) {
+            $product = Product::find($request->id);
+        }
+
+        // 2. Search by 'code_id' if not found by id
+        if (!$product && $request->filled('code_id')) {
+            $product = Product::where('code_id', trim($request->code_id))->first();
+        }
+
+        // 3. Search by exact 'name' if still not found
+        if (!$product && $request->filled('name')) {
+            $product = Product::where('name', trim($request->name))->first();
+        }
+
+        // 4. Create new product if no match found
+        if (!$product) {
+            $product = new Product();
+        }
+
+        $product->code_id = trim($request->code_id);
+        $product->name = trim($request->name);
+        $product->category = $request->category;
+        $product->brand = $brandName;
+        $product->price = $request->price;
+        $product->old_price = $request->old_price ?? null;
+        $product->rating = $request->rating ?? 5.0;
+        $product->reviews = $request->reviews ?? 1;
+        $product->tag = $request->tag ?? 'NEW';
+        $product->specs = $request->specs ?? '';
+        $product->img = $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
+        $product->in_stock = $inStock;
+        $product->is_variable = $request->isVariable ?? $request->is_variable ?? false;
+        $product->variations = $request->variations ?? [];
+        $product->save();
 
         return response()->json([
             'success' => true,
-            'message' => "Product '{$product->name}' with variations saved successfully!",
+            'message' => "Product '{$product->name}' saved successfully!",
             'data' => $product
         ]);
     }
@@ -186,12 +208,42 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::where('code_id', $id)->orWhere('id', $id)->first();
-        if ($product) {
-            $name = $product->name;
-            $product->delete();
-            return response()->json(['success' => true, 'message' => "Product '{$name}' deleted from database"]);
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
         }
-        return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+
+        // SAFETY RULE 2: If any customer order exists for this product, block deletion!
+        $isOrdered = false;
+        $allOrders = Order::select('id', 'order_number', 'items')->get();
+        foreach ($allOrders as $ord) {
+            if (is_array($ord->items)) {
+                foreach ($ord->items as $item) {
+                    $itemId = $item['id'] ?? $item['product_id'] ?? null;
+                    $itemCode = $item['code_id'] ?? null;
+                    $itemName = $item['name'] ?? null;
+
+                    if (
+                        ($itemId && ((string)$itemId === (string)$product->id || (string)$itemId === (string)$product->code_id)) ||
+                        ($itemCode && (string)$itemCode === (string)$product->code_id) ||
+                        ($itemName && strtolower(trim($itemName)) === strtolower(trim($product->name)))
+                    ) {
+                        $isOrdered = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if ($isOrdered) {
+            return response()->json([
+                'success' => false,
+                'message' => "Product '{$product->name}' cannot be deleted because it exists in past customer order records!"
+            ], 422);
+        }
+
+        $name = $product->name;
+        $product->delete();
+        return response()->json(['success' => true, 'message' => "Product '{$name}' deleted from database"]);
     }
 
     // --- CATEGORY DATABASE ENDPOINTS ---
@@ -251,8 +303,31 @@ class ProductController extends Controller
     public function destroyCategory($id)
     {
         $cat = Category::find($id);
-        if ($cat) $cat->delete();
-        return response()->json(['success' => true]);
+        if (!$cat) {
+            $cat = Category::where('slug', $id)->orWhere('name', $id)->first();
+        }
+
+        if (!$cat) {
+            return response()->json(['success' => false, 'message' => 'Category not found'], 404);
+        }
+
+        // SAFETY RULE 1: If any product is listed under this category, block deletion!
+        $catNameLower = strtolower(trim($cat->name));
+        $catSlugLower = strtolower(trim($cat->slug));
+
+        $productCount = Product::whereRaw('LOWER(category) = ?', [$catNameLower])
+            ->orWhereRaw('LOWER(category) = ?', [$catSlugLower])
+            ->count();
+
+        if ($productCount > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Category '{$cat->name}' cannot be deleted because {$productCount} product(s) are currently listed under it!"
+            ], 422);
+        }
+
+        $cat->delete();
+        return response()->json(['success' => true, 'message' => "Category '{$cat->name}' deleted successfully!"]);
     }
 
     // --- BRAND DATABASE ENDPOINTS ---
@@ -312,6 +387,9 @@ class ProductController extends Controller
     public function destroyBrand($id)
     {
         $brand = Brand::find($id);
+        if (!$brand) {
+            $brand = Brand::where('name', $id)->orWhere('slug', $id)->first();
+        }
         if ($brand) $brand->delete();
         return response()->json(['success' => true]);
     }
@@ -342,7 +420,7 @@ class ProductController extends Controller
         $request->validate(['name' => 'required|string']);
         $tag = Tag::find($id);
         if (!$tag) {
-            $tag = Tag::where('name', $id)->first();
+            $tag = Tag::where('name', $id)->orWhere('slug', $id)->first();
         }
 
         $name = strtoupper(trim($request->name));
@@ -362,6 +440,9 @@ class ProductController extends Controller
     public function destroyTag($id)
     {
         $tag = Tag::find($id);
+        if (!$tag) {
+            $tag = Tag::where('name', $id)->orWhere('slug', $id)->first();
+        }
         if ($tag) $tag->delete();
         return response()->json(['success' => true]);
     }

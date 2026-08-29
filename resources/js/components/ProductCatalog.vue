@@ -121,12 +121,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
   products: Array,
   currentCategory: String,
-  wishlist: Object
+  wishlist: Object,
+  categories: Array
 });
 
 const emit = defineEmits(['change-category', 'add-to-cart', 'open-qv', 'toggle-wishlist']);
@@ -134,15 +136,51 @@ const emit = defineEmits(['change-category', 'add-to-cart', 'open-qv', 'toggle-w
 const itemsPerPage = ref(8);
 const currentPage = ref(1);
 
-const filterTabs = [
-  { id: 'all', label: 'All Products' },
-  { id: 'badminton', label: 'Badminton' },
-  { id: 'tennis', label: 'Tennis' },
-  { id: 'cricket', label: 'Cricket' },
-  { id: 'shoes', label: 'Shoes & Spikes' },
-  { id: 'football', label: 'Football' },
-  { id: 'fitness', label: 'Fitness' }
-];
+const categoriesList = ref([]);
+
+async function fetchCategories() {
+  try {
+    const res = await axios.get('/api/categories');
+    if (res.data && res.data.success && Array.isArray(res.data.data)) {
+      categoriesList.value = res.data.data;
+    }
+  } catch (e) {
+    console.warn('Could not load categories in ProductCatalog', e);
+  }
+}
+
+onMounted(() => {
+  fetchCategories();
+});
+
+watch(() => props.categories, (newVal) => {
+  if (newVal && Array.isArray(newVal) && newVal.length > 0) {
+    categoriesList.value = newVal;
+  }
+}, { immediate: true });
+
+const filterTabs = computed(() => {
+  const tabs = [{ id: 'all', label: 'All Products' }];
+  
+  if (categoriesList.value && categoriesList.value.length > 0) {
+    categoriesList.value.forEach(c => {
+      tabs.push({
+        id: c.slug || c.name.toLowerCase(),
+        label: c.name
+      });
+    });
+  } else {
+    tabs.push(
+      { id: 'badminton', label: 'Badminton' },
+      { id: 'cricket', label: 'Cricket' },
+      { id: 'shoes', label: 'Shoes & Spikes' },
+      { id: 'football', label: 'Football' },
+      { id: 'fitness', label: 'Fitness' }
+    );
+  }
+  
+  return tabs;
+});
 
 watch(() => props.currentCategory, () => {
   currentPage.value = 1;

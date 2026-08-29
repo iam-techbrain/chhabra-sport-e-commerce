@@ -165,6 +165,21 @@
             <a 
               href="#" 
               class="admin-tem-menu-link" 
+              :class="{ active: currentTab === 'contact-messages' }"
+              @click.prevent="currentTab = 'contact-messages'; isMobileMenuOpen = false;"
+              title="Customer Contact Form Messages"
+            >
+              <span class="menu-icon">📩</span>
+              <span v-if="!isSidebarCollapsed" class="menu-label">Contact Us</span>
+              <span class="menu-arrow" v-if="!isSidebarCollapsed && contactMessagesList.length > 0">
+                <span v-if="unreadContactCount > 0" style="background:#EF4444; color:#fff; padding:2px 6px; border-radius:10px; font-weight:800; font-size:10px;">{{ unreadContactCount }} NEW</span>
+                <span v-else>{{ contactMessagesList.length }}</span>
+              </span>
+            </a>
+
+            <a 
+              href="#" 
+              class="admin-tem-menu-link" 
               :class="{ active: currentTab === 'orders' }"
               @click.prevent="currentTab = 'orders'; isMobileMenuOpen = false;"
               title="Customer Orders Management"
@@ -615,8 +630,9 @@
                     </span>
                   </td>
                   <td style="text-align:right;">
-                    <div class="action-btn-group">
+                    <div class="action-btn-group" style="display:flex; gap:6px; justify-content:flex-end;">
                       <button class="btn-table-edit" @click="editProduct(p)">Edit</button>
+                      <button class="btn-table-edit" style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA;" @click="deleteProduct(p)">🗑️ Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -969,6 +985,162 @@
           </div>
         </div>
 
+        <!-- CONTACT US MESSAGES MANAGEMENT TAB -->
+        <div v-else-if="currentTab === 'contact-messages'" class="white-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0;">
+            <div>
+              <h2 style="font-family:'Outfit',sans-serif; font-size:22px; font-weight:900; color:#0F172A; margin:0 0 4px 0;">📩 Customer Contact Us Messages</h2>
+              <p style="font-size:13px; color:#64748B; margin:0;">Inquiries, questions, and feedback submitted by users via storefront Contact Us form.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-primary-blue" @click="fetchContactMessages" style="padding:10px 16px; border-radius:8px; font-weight:700; font-size:13px;">🔄 Refresh Messages</button>
+            </div>
+          </div>
+
+          <!-- TOP FILTER BAR -->
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px; margin-bottom:20px;">
+            <div class="search-input-wrap">
+              <input type="text" v-model="contactSearchQuery" placeholder="🔍 Search messages by name, email, phone, company or keywords..." class="clean-input" />
+            </div>
+            <div>
+              <select v-model="contactStatusFilter" class="clean-select" style="width:100%;">
+                <option value="all">🌐 All Statuses ({{ contactMessagesList.length }})</option>
+                <option value="unread">🔵 Unread Only ({{ unreadContactCount }})</option>
+                <option value="read">✅ Read Only</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- MESSAGES DATA TABLE -->
+          <div class="data-table-container">
+            <table class="white-data-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Sender Info</th>
+                  <th>Company</th>
+                  <th>Message Snippet</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="filteredContactMessages.length === 0" class="empty-row">
+                  <td colspan="6">No contact messages found. Form submissions from customers will appear here! 📬</td>
+                </tr>
+                <tr v-for="m in filteredContactMessages" :key="m.id" class="table-row-item" :style="m.status === 'unread' ? 'background:rgba(59,130,246,0.04); font-weight:600;' : ''">
+                  <td style="white-space:nowrap; font-size:12.5px; color:#64748B;">
+                    {{ new Date(m.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}
+                  </td>
+                  <td>
+                    <div>
+                      <strong style="color:#0F172A; display:block; font-size:14px;">{{ m.name }}</strong>
+                      <span style="font-size:12px; color:#3B82F6; display:block;">{{ m.email }}</span>
+                      <span v-if="m.phone" style="font-size:11px; color:#64748B;">📞 {{ m.phone }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span style="font-size:12px; color:#475569;">{{ m.company || 'N/A' }}</span>
+                  </td>
+                  <td style="max-width:300px;">
+                    <div style="font-size:13px; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                      {{ m.message }}
+                    </div>
+                  </td>
+                  <td>
+                    <span 
+                      class="badge-type" 
+                      :style="m.status === 'unread' 
+                        ? 'background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; font-weight:800; padding:4px 8px;' 
+                        : 'background:#F1F5F9; color:#475569; border:1px solid #CBD5E1; padding:4px 8px;'"
+                    >
+                      {{ m.status === 'unread' ? '🔵 Unread' : '✅ Read' }}
+                    </span>
+                  </td>
+                  <td style="text-align:right;">
+                    <div class="action-btn-group">
+                      <button class="btn-table-edit" style="background:#3B82F6; color:#fff;" @click="openContactMessageModal(m)">👁️ View</button>
+                      <button class="btn-table-edit" style="background:#EF4444; color:#fff;" @click="deleteContactMessage(m.id)">🗑️ Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- FULL CONTACT MESSAGE MODAL -->
+          <div v-if="selectedContactModal" class="admin-tem-modal-backdrop" @click.self="selectedContactModal = null">
+            <div class="admin-tem-modal-card" style="max-width:650px;">
+              <div class="modal-card-header">
+                <h3>📩 Contact Message Details</h3>
+                <button class="modal-close-btn" @click="selectedContactModal = null">✕</button>
+              </div>
+
+              <div class="modal-card-body" style="padding:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid #E2E8F0;">
+                  <div>
+                    <h4 style="font-size:18px; font-weight:800; color:#0F172A; margin:0 0 4px 0;">{{ selectedContactModal.name }}</h4>
+                    <a :href="'mailto:' + selectedContactModal.email" style="font-size:13px; color:#2563EB; text-decoration:underline;">{{ selectedContactModal.email }}</a>
+                    <div v-if="selectedContactModal.phone" style="font-size:13px; color:#475569; margin-top:2px;">📞 {{ selectedContactModal.phone }}</div>
+                    <div v-if="selectedContactModal.company" style="font-size:12px; color:#64748B; margin-top:2px;">🏢 Company: {{ selectedContactModal.company }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <span 
+                      class="badge-type" 
+                      :style="selectedContactModal.status === 'unread' 
+                        ? 'background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; font-weight:800;' 
+                        : 'background:#F1F5F9; color:#475569; border:1px solid #CBD5E1;'"
+                    >
+                      {{ selectedContactModal.status === 'unread' ? '🔵 Unread' : '✅ Read' }}
+                    </span>
+                    <div style="font-size:11px; color:#94A3B8; margin-top:6px;">
+                      {{ new Date(selectedContactModal.created_at).toLocaleString() }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- MESSAGE BODY -->
+                <div style="margin-bottom:24px;">
+                  <label style="font-size:12px; font-weight:800; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Customer Message:</label>
+                  <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:16px; border-radius:8px; font-size:14px; color:#1E293B; line-height:1.6; white-space:pre-wrap;">
+                    {{ selectedContactModal.message }}
+                  </div>
+                </div>
+
+                <!-- ACTIONS FOOTER -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:16px; border-top:1px solid #E2E8F0;">
+                  <div style="display:flex; gap:10px;">
+                    <button 
+                      v-if="selectedContactModal.status === 'read'" 
+                      class="btn-table-edit" 
+                      style="background:#64748B; color:#fff;" 
+                      @click="markContactStatus(selectedContactModal, 'unread')"
+                    >
+                      Mark as Unread
+                    </button>
+                    <button 
+                      v-else 
+                      class="btn-table-edit" 
+                      style="background:#10B981; color:#fff;" 
+                      @click="markContactStatus(selectedContactModal, 'read')"
+                    >
+                      Mark as Read
+                    </button>
+                    <a 
+                      :href="'mailto:' + selectedContactModal.email + '?subject=Re: Inquiries from Chhabra Sports'" 
+                      class="btn-table-edit" 
+                      style="background:#2563EB; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"
+                    >
+                      ✉️ Reply via Email
+                    </a>
+                  </div>
+                  <button class="btn-table-edit" style="background:#EF4444; color:#fff;" @click="deleteContactMessage(selectedContactModal.id)">🗑️ Delete Message</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 2. ADD NEW PRODUCT (CLEAN WHITE SINGLE PAGE EDITOR) -->
         <div v-else-if="currentTab === 'add-product'" class="white-card">
           <!-- TOP PRODUCT TYPE SELECTOR BAR -->
@@ -999,23 +1171,87 @@
 
             <div class="grid-3" style="margin-top:16px;">
               <div class="field-box">
-                <label>Category * (DB Synced)</label>
-                <select v-model="newProd.category" class="clean-select" required>
-                  <option value="" disabled>-- Select Category from Database --</option>
-                  <option v-for="c in categories" :key="c.id || c.slug || c.name" :value="c.slug || c.name.toLowerCase()">
-                    {{ c.icon || '📁' }} {{ c.name }}
-                  </option>
-                </select>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <label style="margin:0;">Category * (DB Synced)</label>
+                  <button 
+                    type="button" 
+                    @click="showInlineCatForm = !showInlineCatForm" 
+                    style="background:none; border:none; color:#0284C7; font-weight:700; font-size:11.5px; cursor:pointer; padding:0;"
+                  >
+                    {{ showInlineCatForm ? '✖ Cancel' : '+ Add New Category' }}
+                  </button>
+                </div>
+
+                <div v-if="!showInlineCatForm">
+                  <select v-model="newProd.category" class="clean-select" required>
+                    <option value="" disabled>-- Select Category from Database --</option>
+                    <option v-for="c in categories" :key="c.id || c.slug || c.name" :value="c.slug || c.name.toLowerCase()">
+                      {{ c.icon || '📁' }} {{ c.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div v-else style="display:flex; gap:6px; align-items:center;">
+                  <input 
+                    type="text" 
+                    v-model="quickCatName" 
+                    placeholder="Type new category name..." 
+                    class="clean-input-sm" 
+                    style="flex:1; padding:6px 10px; font-weight:600;" 
+                    @keyup.enter="quickCreateCategory"
+                  />
+                  <button 
+                    type="button" 
+                    class="btn-secondary btn-sm" 
+                    style="padding:6px 12px; font-weight:700; background:#0284C7; color:#fff; border:none;" 
+                    @click="quickCreateCategory" 
+                    :disabled="isQuickCatSubmitting"
+                  >
+                    {{ isQuickCatSubmitting ? 'Saving...' : '✓ Add' }}
+                  </button>
+                </div>
               </div>
 
               <div class="field-box">
-                <label>Brand * (DB Synced)</label>
-                <select v-model="newProd.brand" class="clean-select" required>
-                  <option value="" disabled>-- Select Brand from Database --</option>
-                  <option v-for="b in brands" :key="b.id || b.slug || b.name" :value="b.name">
-                    {{ b.name }}
-                  </option>
-                </select>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <label style="margin:0;">Brand (Optional)</label>
+                  <button 
+                    type="button" 
+                    @click="showInlineBrandForm = !showInlineBrandForm" 
+                    style="background:none; border:none; color:#0284C7; font-weight:700; font-size:11.5px; cursor:pointer; padding:0;"
+                  >
+                    {{ showInlineBrandForm ? '✖ Cancel' : '+ Add New Brand' }}
+                  </button>
+                </div>
+
+                <div v-if="!showInlineBrandForm">
+                  <select v-model="newProd.brand" class="clean-select">
+                    <option value="">-- No Brand / Generic --</option>
+                    <option v-for="b in brands" :key="b.id || b.slug || b.name" :value="b.name">
+                      {{ b.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div v-else style="display:flex; gap:6px; align-items:center;">
+                  <input 
+                    type="text" 
+                    v-model="quickBrandName" 
+                    placeholder="Type new brand name..." 
+                    class="clean-input-sm" 
+                    style="flex:1; padding:6px 10px; font-weight:600;" 
+                    @keyup.enter="quickCreateBrand"
+                  />
+                  <button 
+                    type="button" 
+                    class="btn-secondary btn-sm" 
+                    style="padding:6px 12px; font-weight:700; background:#0284C7; color:#fff; border:none;" 
+                    @click="quickCreateBrand" 
+                    :disabled="isQuickBrandSubmitting"
+                  >
+                    {{ isQuickBrandSubmitting ? 'Saving...' : '✓ Add' }}
+                  </button>
+                </div>
               </div>
 
               <div class="field-box">
@@ -1041,11 +1277,11 @@
             
             <div class="grid-3">
               <div class="field-box">
-                <label>Regular Price (₹) *</label>
+                <label>Regular Price / MRP (₹) *</label>
                 <input type="number" v-model="newProd.price" required placeholder="5000" class="clean-input highlight" />
               </div>
               <div class="field-box">
-                <label>Sale Price (₹)</label>
+                <label>Sale Price / Offer Price (₹)</label>
                 <input type="number" v-model="newProd.salePrice" placeholder="4500" class="clean-input" />
               </div>
               <div class="field-box">
@@ -1381,19 +1617,17 @@
                 <tr>
                   <th>Brand Name</th>
                   <th>Description / Portfolio</th>
-                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="filteredBrands.length === 0">
-                  <td colspan="4" style="text-align:center; color:#94A3B8; padding:20px;">No brands match search query.</td>
+                  <td colspan="3" style="text-align:center; color:#94A3B8; padding:20px;">No brands match search query.</td>
                 </tr>
                 <tr 
                   v-for="b in filteredBrands" 
                   :key="b.id || b.name" 
                   class="table-row-item"
-                  :style="{ opacity: (editingBrandKey === (b.id || b.name) ? editingBrandForm.status === 'active' : isBrandActive(b.name)) ? 1 : 0.65 }"
                 >
                   <!-- NAME -->
                   <td>
@@ -1415,30 +1649,11 @@
                     <input v-else type="text" v-model="editingBrandForm.desc" class="clean-input-sm" style="max-width:300px;" />
                   </td>
 
-                  <!-- STATUS -->
-                  <td>
-                    <div v-if="editingBrandKey === (b.id || b.name)">
-                      <select v-model="editingBrandForm.status" class="clean-select" style="padding:4px 8px; font-weight:700; font-size:12px; border-radius:6px; cursor:pointer;">
-                        <option value="active">🟢 Active</option>
-                        <option value="inactive">🔴 Inactive</option>
-                      </select>
-                    </div>
-                    <div v-else>
-                      <button 
-                        class="status-toggle-btn"
-                        :class="isBrandActive(b.name) ? 'btn-status-active' : 'btn-status-inactive'"
-                        @click="toggleBrandStatus(b)"
-                        title="Click to toggle Active / Inactive"
-                      >
-                        {{ isBrandActive(b.name) ? '🟢 Active' : '🔴 Inactive' }}
-                      </button>
-                    </div>
-                  </td>
-
                   <!-- ACTION -->
                   <td>
-                    <div v-if="editingBrandKey !== (b.id || b.name)" style="display:flex; gap:8px;">
+                    <div v-if="editingBrandKey !== (b.id || b.name)" style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-text-blue" @click="startEditBrand(b)" style="font-weight:700; font-size:13px;">✏️ Edit Brand</button>
+                      <button class="btn-text-danger" @click="deleteBrand(b)" style="font-weight:700; font-size:13px; color:#DC2626;">🗑️ Delete</button>
                     </div>
                     <div v-else style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-secondary btn-sm" @click="saveEditBrand(b)">✓ Save</button>
@@ -1495,19 +1710,17 @@
                   <th style="width:70px;">Icon</th>
                   <th>Category Name</th>
                   <th>URL Slug</th>
-                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="filteredCategories.length === 0">
-                  <td colspan="5" style="text-align:center; color:#94A3B8; padding:20px;">No categories match search query.</td>
+                  <td colspan="4" style="text-align:center; color:#94A3B8; padding:20px;">No categories match search query.</td>
                 </tr>
                 <tr 
                   v-for="c in filteredCategories" 
                   :key="c.id || c.slug || c.name" 
                   class="table-row-item"
-                  :style="{ opacity: (editingCategoryKey === (c.id || c.slug || c.name) ? editingCategoryForm.status === 'active' : isCategoryActive(c.slug || c.name)) ? 1 : 0.65 }"
                 >
                   <!-- ICON -->
                   <td style="font-size:22px;">
@@ -1535,30 +1748,11 @@
                     <input v-else type="text" v-model="editingCategoryForm.slug" class="clean-input-sm" style="max-width:180px;" />
                   </td>
 
-                  <!-- STATUS -->
-                  <td>
-                    <div v-if="editingCategoryKey === (c.id || c.slug || c.name)">
-                      <select v-model="editingCategoryForm.status" class="clean-select" style="padding:4px 8px; font-weight:700; font-size:12px; border-radius:6px; cursor:pointer;">
-                        <option value="active">🟢 Active</option>
-                        <option value="inactive">🔴 Inactive</option>
-                      </select>
-                    </div>
-                    <div v-else>
-                      <button 
-                        class="status-toggle-btn"
-                        :class="isCategoryActive(c.slug || c.name) ? 'btn-status-active' : 'btn-status-inactive'"
-                        @click="toggleCategoryStatus(c)"
-                        title="Click to toggle Active / Inactive"
-                      >
-                        {{ isCategoryActive(c.slug || c.name) ? '🟢 Active' : '🔴 Inactive' }}
-                      </button>
-                    </div>
-                  </td>
-
                   <!-- ACTION -->
                   <td>
-                    <div v-if="editingCategoryKey !== (c.id || c.slug || c.name)" style="display:flex; gap:8px;">
+                    <div v-if="editingCategoryKey !== (c.id || c.slug || c.name)" style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-text-blue" @click="startEditCategory(c)" style="font-weight:700; font-size:13px;">✏️ Edit Category</button>
+                      <button class="btn-text-danger" @click="deleteCategory(c)" style="font-weight:700; font-size:13px; color:#DC2626;">🗑️ Delete</button>
                     </div>
                     <div v-else style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-secondary btn-sm" @click="saveEditCategory(c)">✓ Save</button>
@@ -1619,15 +1813,14 @@
                 <tr>
                   <th>Tag / Badge Name</th>
                   <th>Preview Badge</th>
-                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="filteredTagsList.length === 0">
-                  <td colspan="4" style="text-align:center; color:#94A3B8; padding:20px;">No tags match search query.</td>
+                  <td colspan="3" style="text-align:center; color:#94A3B8; padding:20px;">No tags match search query.</td>
                 </tr>
-                <tr v-for="t in filteredTagsList" :key="t" class="table-row-item" :style="{ opacity: (editingTagOldName === t ? editingTagStatus === 'active' : isTagActive(t)) ? 1 : 0.65 }">
+                <tr v-for="t in filteredTagsList" :key="t" class="table-row-item">
                   <td v-if="editingTagOldName !== t">
                     <strong style="font-size:14px; color:#0F172A;">{{ t }}</strong>
                   </td>
@@ -1645,39 +1838,16 @@
                   <td>
                     <span 
                       class="badge-blue" 
-                      :style="{
-                        background: (editingTagOldName === t ? editingTagStatus === 'active' : isTagActive(t)) ? '#FEF3C7' : '#F1F5F9',
-                        color: (editingTagOldName === t ? editingTagStatus === 'active' : isTagActive(t)) ? '#B45309' : '#64748B',
-                        fontWeight: 800
-                      }"
+                      style="background:#FEF3C7; color:#B45309; font-weight:800;"
                     >
                       🏷️ {{ editingTagOldName === t ? (editingTagNewValue.toUpperCase() || t) : t }}
-                      <span v-if="(editingTagOldName === t ? editingTagStatus === 'inactive' : !isTagActive(t))" style="font-size:11px; font-weight:600; opacity:0.8; margin-left:4px;">(Inactive)</span>
                     </span>
                   </td>
 
                   <td>
-                    <div v-if="editingTagOldName === t">
-                      <select v-model="editingTagStatus" class="clean-select" style="padding:4px 8px; font-weight:700; font-size:12px; border-radius:6px; cursor:pointer;">
-                        <option value="active">🟢 Active</option>
-                        <option value="inactive">🔴 Inactive</option>
-                      </select>
-                    </div>
-                    <div v-else>
-                      <button 
-                        class="status-toggle-btn"
-                        :class="isTagActive(t) ? 'btn-status-active' : 'btn-status-inactive'"
-                        @click="toggleTagStatus(t)"
-                        title="Click to toggle Active / Inactive"
-                      >
-                        {{ isTagActive(t) ? '🟢 Active' : '🔴 Inactive' }}
-                      </button>
-                    </div>
-                  </td>
-
-                  <td>
-                    <div v-if="editingTagOldName !== t" style="display:flex; gap:8px;">
+                    <div v-if="editingTagOldName !== t" style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-text-blue" @click="startEditTag(t)" style="font-weight:700; font-size:13px;">✏️ Edit Tag</button>
+                      <button class="btn-text-danger" @click="deleteTag(t)" style="font-weight:700; font-size:13px; color:#DC2626;">🗑️ Delete</button>
                     </div>
                     <div v-else style="display:flex; gap:8px; align-items:center;">
                       <button class="btn-secondary btn-sm" @click="saveEditTag(t)">✓ Save</button>
@@ -1979,6 +2149,83 @@ async function fetchBackendUsers() {
   }
 }
 
+// CONTACT MESSAGES MANAGEMENT STATE
+const contactMessagesList = ref([]);
+const contactSearchQuery = ref('');
+const contactStatusFilter = ref('all');
+const selectedContactModal = ref(null);
+
+const unreadContactCount = computed(() => {
+  return contactMessagesList.value.filter(m => m.status === 'unread').length;
+});
+
+async function fetchContactMessages() {
+  try {
+    const res = await axios.get('/api/contact-messages');
+    if (res.data && res.data.success && Array.isArray(res.data.messages)) {
+      contactMessagesList.value = res.data.messages;
+    }
+  } catch (err) {
+    console.error('Error fetching contact messages from database:', err);
+  }
+}
+
+const filteredContactMessages = computed(() => {
+  let list = contactMessagesList.value;
+  if (contactStatusFilter.value !== 'all') {
+    list = list.filter(m => m.status === contactStatusFilter.value);
+  }
+  if (contactSearchQuery.value.trim()) {
+    const q = contactSearchQuery.value.toLowerCase().trim();
+    list = list.filter(m => 
+      (m.name && m.name.toLowerCase().includes(q)) || 
+      (m.email && m.email.toLowerCase().includes(q)) || 
+      (m.phone && m.phone.includes(q)) ||
+      (m.company && m.company.toLowerCase().includes(q)) ||
+      (m.message && m.message.toLowerCase().includes(q))
+    );
+  }
+  return list;
+});
+
+async function openContactMessageModal(msg) {
+  selectedContactModal.value = msg;
+  if (msg.status === 'unread') {
+    try {
+      await axios.put(`/api/contact-messages/${msg.id}/status`, { status: 'read' });
+      msg.status = 'read';
+      fetchContactMessages();
+    } catch (e) {}
+  }
+}
+
+async function markContactStatus(msg, status) {
+  try {
+    const res = await axios.put(`/api/contact-messages/${msg.id}/status`, { status });
+    if (res.data && res.data.success) {
+      msg.status = status;
+      if (selectedContactModal.value && selectedContactModal.value.id === msg.id) {
+        selectedContactModal.value.status = status;
+      }
+      showToast(`Contact message marked as ${status.toUpperCase()}! 📩`);
+      fetchContactMessages();
+    }
+  } catch (e) {}
+}
+
+async function deleteContactMessage(id) {
+  if (confirm('Are you sure you want to delete this contact message?')) {
+    try {
+      const res = await axios.delete(`/api/contact-messages/${id}`);
+      if (res.data && res.data.success) {
+        showToast('Contact message deleted successfully. 🗑️');
+        selectedContactModal.value = null;
+        fetchContactMessages();
+      }
+    } catch (e) {}
+  }
+}
+
 const filteredUsersList = computed(() => {
   let list = usersList.value;
   if (userStatusFilter.value !== 'all') {
@@ -2230,10 +2477,87 @@ const brands = ref([]);
 const showBrandForm = ref(false);
 const newBrandForm = ref({ name: '', desc: '' });
 
+const showInlineBrandForm = ref(false);
+const quickBrandName = ref('');
+const isQuickBrandSubmitting = ref(false);
+
+async function quickCreateBrand() {
+  const bName = quickBrandName.value.trim();
+  if (!bName) {
+    showToast('Please enter a Brand Name!');
+    return;
+  }
+
+  isQuickBrandSubmitting.value = true;
+  try {
+    const res = await axios.post('/api/brands', { name: bName });
+    if (res.data && res.data.success) {
+      const newBrandObj = res.data.data;
+      if (!brands.value.some(b => b.name.toLowerCase() === bName.toLowerCase())) {
+        brands.value.push(newBrandObj || { name: bName, slug: bName.toLowerCase() });
+      }
+      newProd.value.brand = bName;
+      quickBrandName.value = '';
+      showInlineBrandForm.value = false;
+      showToast(`New brand "${bName}" added to database and selected! 🎉`);
+    } else {
+      showToast('Could not save brand!');
+    }
+  } catch (e) {
+    if (!brands.value.some(b => b.name.toLowerCase() === bName.toLowerCase())) {
+      brands.value.push({ name: bName, slug: bName.toLowerCase() });
+    }
+    newProd.value.brand = bName;
+    quickBrandName.value = '';
+    showInlineBrandForm.value = false;
+    showToast(`Brand "${bName}" selected! 🎉`);
+  } finally {
+    isQuickBrandSubmitting.value = false;
+  }
+}
+
 const categories = ref([]);
 
 const showCatForm = ref(false);
 const newCatForm = ref({ name: '', icon: '📦', slug: '' });
+
+const showInlineCatForm = ref(false);
+const quickCatName = ref('');
+const isQuickCatSubmitting = ref(false);
+
+async function quickCreateCategory() {
+  const cName = quickCatName.value.trim();
+  if (!cName) {
+    showToast('Please enter a Category Name!');
+    return;
+  }
+
+  isQuickCatSubmitting.value = true;
+  try {
+    const res = await axios.post('/api/categories', { name: cName, icon: '📦' });
+    if (res.data && res.data.success) {
+      const newCatObj = res.data.data;
+      if (!categories.value.some(c => c.name.toLowerCase() === cName.toLowerCase())) {
+        categories.value.push(newCatObj || { name: cName, slug: cName.toLowerCase(), icon: '📦' });
+      }
+      newProd.value.category = newCatObj?.slug || cName.toLowerCase();
+      quickCatName.value = '';
+      showInlineCatForm.value = false;
+      showToast(`New category "${cName}" added to database and selected! 🎉`);
+    }
+  } catch (e) {
+    const slug = cName.toLowerCase().replace(/\s+/g, '-');
+    if (!categories.value.some(c => c.name.toLowerCase() === cName.toLowerCase())) {
+      categories.value.push({ name: cName, slug, icon: '📦' });
+    }
+    newProd.value.category = slug;
+    quickCatName.value = '';
+    showInlineCatForm.value = false;
+    showToast(`Category "${cName}" selected! 🎉`);
+  } finally {
+    isQuickCatSubmitting.value = false;
+  }
+}
 
 const tags = ref([]);
 
@@ -2366,6 +2690,7 @@ onMounted(() => {
   fetchFilteredProducts();
   fetchOrdersFromBackend();
   fetchBackendUsers();
+  fetchContactMessages();
 });
 
 watch(currentTab, (newTab) => {
@@ -2373,6 +2698,8 @@ watch(currentTab, (newTab) => {
     fetchBackendUsers();
   } else if (newTab === 'orders') {
     fetchOrdersFromBackend();
+  } else if (newTab === 'contact-messages') {
+    fetchContactMessages();
   }
 });
 
@@ -2386,14 +2713,28 @@ async function saveNewProduct() {
   const isVar = productType.value === 'variable';
   const isInStock = newProd.value.stockStatus !== 'Out of stock';
 
+  const regPrice = Number(newProd.value.price) || 0;
+  const salePrice = Number(newProd.value.salePrice) || 0;
+
+  let effectivePrice = regPrice;
+  let oldPrice = null;
+
+  if (salePrice > 0 && salePrice < regPrice) {
+    effectivePrice = salePrice; // Selling price (₹4500)
+    oldPrice = regPrice; // Original MRP strikethrough (₹5000)
+  } else if (salePrice > 0) {
+    effectivePrice = salePrice;
+  } else {
+    effectivePrice = regPrice;
+  }
+
   const prodToAdd = {
-    id: newProd.value.id || ('p_custom_' + Date.now()),
     code_id: newProd.value.code_id || ('SKU-' + Date.now()),
     name: newProd.value.name,
     category: newProd.value.category,
-    brand: newProd.value.brand,
-    price: Number(newProd.value.price) || 5000,
-    old_price: Number(newProd.value.salePrice) || (Number(newProd.value.price) + 1500),
+    brand: newProd.value.brand || 'Generic',
+    price: effectivePrice,
+    old_price: oldPrice,
     rating: 5.0,
     reviews: 1,
     tag: newProd.value.tag || 'NEW',
@@ -2405,11 +2746,23 @@ async function saveNewProduct() {
     variations: isVar ? variationsList.value : []
   };
 
-  try {
-    await axios.post('/api/products', prodToAdd);
-  } catch (e) {}
+  if (newProd.value.id) {
+    prodToAdd.id = newProd.value.id;
+  }
 
-  emit('add-product', prodToAdd);
+  let savedRecord = { ...prodToAdd };
+
+  try {
+    const res = await axios.post('/api/products', prodToAdd);
+    if (res.data && res.data.success && res.data.data) {
+      savedRecord = { ...savedRecord, ...res.data.data };
+    }
+  } catch (e) {
+    console.error('Error saving product:', e);
+  }
+
+  emit('add-product', savedRecord);
+  await fetchFilteredProducts();
   showToast(`${isVar ? 'Variable' : 'Simple'} Product "${newProd.value.name}" Saved (${isInStock ? 'In Stock 🟢' : 'Out of Stock 🔴'})! 🎉`);
 
   newProd.value = {
@@ -2431,14 +2784,26 @@ async function saveNewProduct() {
   currentTab.value = 'all-products';
 }
 
-async function handleDeleteProduct(id) {
-  if (confirm('Are you sure you want to delete this product from catalog?')) {
+async function deleteProduct(p) {
+  if (!p) return;
+  const targetId = typeof p === 'object' ? (p.id || p.code_id) : p;
+  const name = typeof p === 'object' ? p.name : 'Product';
+
+  if (confirm(`Are you sure you want to delete "${name}" from store database?`)) {
     try {
-      await axios.delete(`/api/products/${id}`);
-    } catch (e) {}
-    emit('delete-product', id);
-    fetchFilteredProducts();
-    showToast('Product deleted from store catalog.');
+      const res = await axios.delete(`/api/products/${targetId}`);
+      if (res.data && res.data.success) {
+        showToast(`Product "${name}" deleted from store database! 🗑️`);
+        emit('delete-product', targetId);
+        fetchFilteredProducts();
+      } else {
+        showToast(`⚠️ ${res.data?.message || 'Cannot delete product!'}`);
+      }
+    } catch (e) {
+      const errMsg = e.response?.data?.message || `Cannot delete product "${name}"!`;
+      showToast(`⚠️ ${errMsg}`);
+      fetchFilteredProducts();
+    }
   }
 }
 
@@ -2447,6 +2812,16 @@ function editProduct(p) {
   const stockBool = (p.in_stock !== false && p.in_stock !== 0 && p.in_stock !== 'false');
   newProd.value.stockStatus = (p.stockStatus === 'Out of stock' || !stockBool) ? 'Out of stock' : 'In stock';
   productType.value = (p.isVariable || p.is_variable) ? 'variable' : 'simple';
+
+  // Correctly map prices for edit form
+  if (p.old_price && Number(p.old_price) > Number(p.price)) {
+    newProd.value.price = p.old_price; // Regular Price (MRP)
+    newProd.value.salePrice = p.price; // Sale Price (Discounted)
+  } else {
+    newProd.value.price = p.price;
+    newProd.value.salePrice = '';
+  }
+
   if (p.variations && Array.isArray(p.variations) && p.variations.length > 0) {
     variationsList.value = p.variations;
   }
@@ -2659,42 +3034,27 @@ function addBrand() {
 }
 
 const editingBrandKey = ref(null);
-const editingBrandForm = ref({ name: '', desc: '', status: 'active' });
+const editingBrandForm = ref({ name: '', desc: '' });
 const inactiveBrands = ref(new Set());
 
 function isBrandActive(brandName) {
-  return !inactiveBrands.value.has(brandName);
+  return true;
 }
 
-function toggleBrandStatus(b) {
-  const identifier = b.name;
-  const newSet = new Set(inactiveBrands.value);
-  if (newSet.has(identifier)) {
-    newSet.delete(identifier);
-    showToast(`Brand '${b.name}' is now Active 🟢`);
-  } else {
-    newSet.add(identifier);
-    showToast(`Brand '${b.name}' is now Inactive 🔴`);
-  }
-  inactiveBrands.value = newSet;
-  try {
-    localStorage.setItem('chhabra_inactive_brands', JSON.stringify(Array.from(newSet)));
-  } catch (e) {}
-}
+function toggleBrandStatus(b) {}
 
 function startEditBrand(b) {
   const key = b.id || b.name;
   editingBrandKey.value = key;
   editingBrandForm.value = {
     name: b.name,
-    desc: b.desc || b.description || '',
-    status: isBrandActive(b.name) ? 'active' : 'inactive'
+    desc: b.desc || b.description || ''
   };
 }
 
 function cancelEditBrand() {
   editingBrandKey.value = null;
-  editingBrandForm.value = { name: '', desc: '', status: 'active' };
+  editingBrandForm.value = { name: '', desc: '' };
 }
 
 async function saveEditBrand(originalBrand) {
@@ -2705,7 +3065,6 @@ async function saveEditBrand(originalBrand) {
 
   const updatedName = editingBrandForm.value.name.trim();
   const updatedDesc = editingBrandForm.value.desc.trim() || 'Official Sports Equipment Brand';
-  const updatedStatus = editingBrandForm.value.status;
 
   const oldIdentifier = originalBrand.name;
   const idx = brands.value.findIndex(b => (b.id && b.id === originalBrand.id) || b.name === originalBrand.name);
@@ -2718,19 +3077,8 @@ async function saveEditBrand(originalBrand) {
       description: updatedDesc
     };
 
-    const newIdentifier = updatedName;
-    const newSet = new Set(inactiveBrands.value);
-    if (newSet.has(oldIdentifier)) newSet.delete(oldIdentifier);
-    if (updatedStatus === 'inactive') {
-      newSet.add(newIdentifier);
-    } else {
-      newSet.delete(newIdentifier);
-    }
-    inactiveBrands.value = newSet;
-
     try {
       localStorage.setItem('chhabra_brands', JSON.stringify(brands.value));
-      localStorage.setItem('chhabra_inactive_brands', JSON.stringify(Array.from(newSet)));
     } catch (e) {}
 
     try {
@@ -2740,8 +3088,7 @@ async function saveEditBrand(originalBrand) {
       });
     } catch (e) {}
 
-    const statusText = updatedStatus === 'active' ? 'Active 🟢' : 'Inactive 🔴';
-    showToast(`Brand "${updatedName}" updated (${statusText})! ✏️🎉`);
+    showToast(`Brand "${updatedName}" updated successfully! ✏️🎉`);
   }
 
   editingBrandKey.value = null;
@@ -2777,28 +3124,14 @@ function addCategory() {
 }
 
 const editingCategoryKey = ref(null);
-const editingCategoryForm = ref({ name: '', icon: '📦', slug: '', status: 'active' });
+const editingCategoryForm = ref({ name: '', icon: '📦', slug: '' });
 const inactiveCategories = ref(new Set());
 
 function isCategoryActive(catNameOrSlug) {
-  return !inactiveCategories.value.has(catNameOrSlug);
+  return true;
 }
 
-function toggleCategoryStatus(c) {
-  const identifier = c.slug || c.name;
-  const newSet = new Set(inactiveCategories.value);
-  if (newSet.has(identifier)) {
-    newSet.delete(identifier);
-    showToast(`Category '${c.name}' is now Active 🟢`);
-  } else {
-    newSet.add(identifier);
-    showToast(`Category '${c.name}' is now Inactive 🔴`);
-  }
-  inactiveCategories.value = newSet;
-  try {
-    localStorage.setItem('chhabra_inactive_categories', JSON.stringify(Array.from(newSet)));
-  } catch (e) {}
-}
+function toggleCategoryStatus(c) {}
 
 function startEditCategory(c) {
   const key = c.id || c.slug || c.name;
@@ -2806,14 +3139,13 @@ function startEditCategory(c) {
   editingCategoryForm.value = {
     name: c.name,
     icon: c.icon || '📦',
-    slug: c.slug || c.name.toLowerCase().replace(/\s+/g, '-'),
-    status: isCategoryActive(c.slug || c.name) ? 'active' : 'inactive'
+    slug: c.slug || c.name.toLowerCase().replace(/\s+/g, '-')
   };
 }
 
 function cancelEditCategory() {
   editingCategoryKey.value = null;
-  editingCategoryForm.value = { name: '', icon: '📦', slug: '', status: 'active' };
+  editingCategoryForm.value = { name: '', icon: '📦', slug: '' };
 }
 
 async function saveEditCategory(originalCat) {
@@ -2825,7 +3157,6 @@ async function saveEditCategory(originalCat) {
   const updatedName = editingCategoryForm.value.name.trim();
   const updatedIcon = editingCategoryForm.value.icon.trim() || '📦';
   const updatedSlug = editingCategoryForm.value.slug.trim() || updatedName.toLowerCase().replace(/\s+/g, '-');
-  const updatedStatus = editingCategoryForm.value.status;
 
   const oldIdentifier = originalCat.slug || originalCat.name;
   const idx = categories.value.findIndex(c => (c.id && c.id === originalCat.id) || c.slug === originalCat.slug || c.name === originalCat.name);
@@ -2838,19 +3169,8 @@ async function saveEditCategory(originalCat) {
       slug: updatedSlug
     };
 
-    const newIdentifier = updatedSlug || updatedName;
-    const newSet = new Set(inactiveCategories.value);
-    if (newSet.has(oldIdentifier)) newSet.delete(oldIdentifier);
-    if (updatedStatus === 'inactive') {
-      newSet.add(newIdentifier);
-    } else {
-      newSet.delete(newIdentifier);
-    }
-    inactiveCategories.value = newSet;
-
     try {
       localStorage.setItem('chhabra_categories', JSON.stringify(categories.value));
-      localStorage.setItem('chhabra_inactive_categories', JSON.stringify(Array.from(newSet)));
     } catch (e) {}
 
     try {
@@ -2861,8 +3181,7 @@ async function saveEditCategory(originalCat) {
       });
     } catch (e) {}
 
-    const statusText = updatedStatus === 'active' ? 'Active 🟢' : 'Inactive 🔴';
-    showToast(`Category "${updatedName}" updated (${statusText})! ✏️🎉`);
+    showToast(`Category "${updatedName}" updated successfully! ✏️🎉`);
   }
 
   editingCategoryKey.value = null;
@@ -2902,38 +3221,22 @@ const showTagForm = ref(false);
 const newTagInput = ref('');
 const editingTagOldName = ref(null);
 const editingTagNewValue = ref('');
-const editingTagStatus = ref('active');
 const inactiveTags = ref(new Set());
 
 function isTagActive(tagName) {
-  return !inactiveTags.value.has(tagName);
+  return true;
 }
 
-function toggleTagStatus(tagName) {
-  const newSet = new Set(inactiveTags.value);
-  if (newSet.has(tagName)) {
-    newSet.delete(tagName);
-    showToast(`Tag '🏷️ ${tagName}' is now Active 🟢`);
-  } else {
-    newSet.add(tagName);
-    showToast(`Tag '🏷️ ${tagName}' is now Inactive 🔴`);
-  }
-  inactiveTags.value = newSet;
-  try {
-    localStorage.setItem('chhabra_inactive_tags', JSON.stringify(Array.from(newSet)));
-  } catch (e) {}
-}
+function toggleTagStatus(tagName) {}
 
 function startEditTag(tagName) {
   editingTagOldName.value = tagName;
   editingTagNewValue.value = tagName;
-  editingTagStatus.value = isTagActive(tagName) ? 'active' : 'inactive';
 }
 
 function cancelEditTag() {
   editingTagOldName.value = null;
   editingTagNewValue.value = '';
-  editingTagStatus.value = 'active';
 }
 
 async function saveEditTag(oldName) {
@@ -2946,30 +3249,18 @@ async function saveEditTag(oldName) {
   if (idx !== -1) {
     tags.value[idx] = updatedTag;
 
-    const newSet = new Set(inactiveTags.value);
-    if (newSet.has(oldName)) newSet.delete(oldName);
-    if (editingTagStatus.value === 'inactive') {
-      newSet.add(updatedTag);
-    } else {
-      newSet.delete(updatedTag);
-    }
-    inactiveTags.value = newSet;
-
     try {
       localStorage.setItem('chhabra_tags', JSON.stringify(tags.value));
-      localStorage.setItem('chhabra_inactive_tags', JSON.stringify(Array.from(newSet)));
     } catch (e) {}
 
     try {
       await axios.put(`/api/tags/${encodeURIComponent(oldName)}`, { name: updatedTag });
     } catch (e) {}
 
-    const statusText = editingTagStatus.value === 'active' ? 'Active 🟢' : 'Inactive 🔴';
-    showToast(`Tag updated to '🏷️ ${updatedTag}' (${statusText}) successfully! ✏️🎉`);
+    showToast(`Tag updated to '🏷️ ${updatedTag}' successfully! ✏️🎉`);
   }
   editingTagOldName.value = null;
   editingTagNewValue.value = '';
-  editingTagStatus.value = 'active';
 }
 
 const filteredAttributesList = computed(() => {
@@ -3033,30 +3324,76 @@ const filteredTagsList = computed(() => {
   return tags.value.filter(t => t.toLowerCase().includes(q));
 });
 
-function deleteBrand(idx) {
-  const name = brands.value[idx].name;
-  brands.value.splice(idx, 1);
-  showToast(`Brand "${name}" removed.`);
-}
+async function deleteBrand(b) {
+  if (!b) return;
+  const name = typeof b === 'object' ? b.name : b;
+  const targetId = typeof b === 'object' ? (b.id || b.name || b.slug) : b;
 
-function deleteCategory(idx) {
-  const name = categories.value[idx].name;
-  categories.value.splice(idx, 1);
-  showToast(`Category "${name}" removed.`);
-}
+  if (confirm(`Are you sure you want to delete brand "${name}"?`)) {
+    brands.value = brands.value.filter(brand => (brand.id && brand.id === b.id) ? false : brand.name === b.name ? false : true);
 
-function removeTagByName(tagName) {
-  const idx = tags.value.indexOf(tagName);
-  if (idx !== -1) {
-    tags.value.splice(idx, 1);
-    showToast(`Tag "${tagName}" removed.`);
+    try {
+      localStorage.setItem('chhabra_brands', JSON.stringify(brands.value));
+    } catch (e) {}
+
+    try {
+      await axios.delete(`/api/brands/${encodeURIComponent(targetId)}`);
+    } catch (e) {}
+
+    showToast(`Brand "${name}" deleted successfully! 🗑️`);
+    await loadAdminPersistedData();
   }
 }
 
+async function deleteCategory(c) {
+  if (!c) return;
+  const name = typeof c === 'object' ? c.name : c;
+  const targetId = typeof c === 'object' ? (c.id || c.slug || c.name) : c;
+
+  if (confirm(`Are you sure you want to delete category "${name}"?`)) {
+    try {
+      const res = await axios.delete(`/api/categories/${encodeURIComponent(targetId)}`);
+      if (res.data && res.data.success) {
+        showToast(`Category "${name}" deleted successfully! 🗑️`);
+        await loadAdminPersistedData();
+      } else {
+        showToast(`⚠️ ${res.data?.message || 'Cannot delete category!'}`);
+      }
+    } catch (e) {
+      const errMsg = e.response?.data?.message || `Cannot delete category "${name}"!`;
+      showToast(`⚠️ ${errMsg}`);
+    }
+  }
+}
+
+async function deleteTag(t) {
+  if (!t) return;
+  const tagName = typeof t === 'object' ? t.name : t;
+
+  if (confirm(`Are you sure you want to delete tag "${tagName}"?`)) {
+    tags.value = tags.value.filter(tag => (typeof tag === 'object' ? tag.name : tag) !== tagName);
+
+    try {
+      localStorage.setItem('chhabra_tags', JSON.stringify(tags.value));
+    } catch (e) {}
+
+    try {
+      await axios.delete(`/api/tags/${encodeURIComponent(tagName)}`);
+    } catch (e) {}
+
+    showToast(`Tag "${tagName}" deleted successfully! 🗑️`);
+    await loadAdminPersistedData();
+  }
+}
+
+function removeTagByName(tagName) {
+  deleteTag(tagName);
+}
+
 function removeTag(idx) {
-  const removedName = tags.value[idx];
-  tags.value.splice(idx, 1);
-  showToast(`Tag '🏷️ ${removedName}' removed.`);
+  if (tags.value[idx]) {
+    deleteTag(tags.value[idx]);
+  }
 }
 
 /* CUSTOMER ORDERS MANAGEMENT ENGINE */

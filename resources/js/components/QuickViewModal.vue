@@ -269,7 +269,7 @@ const activeImage = computed(() => {
     const found = colorList.value.find(c => c.name === selectedColor.value);
     return found?.img || props.product?.img;
   }
-  return props.product?.img || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80';
+  return props.product?.img || 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
 });
 
 const activeVariantSKU = computed(() => {

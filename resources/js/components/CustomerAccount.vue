@@ -11,7 +11,7 @@
           <div class="user-info-text">
             <span class="welcome-tag">WELCOME BACK TO CHHABRA SPORTS</span>
             <h1 class="user-fullname">{{ user?.name || 'Valued Customer' }}</h1>
-            <p class="user-email">📧 {{ user?.email || 'customer@example.com' }}</p>
+            <p class="user-email">📧 {{ user?.email || 'customer@example.com' }} <span v-if="user?.phone"> &nbsp;|&nbsp; 📱 {{ user.phone }}</span></p>
           </div>
 
           <div class="account-header-actions">
@@ -136,13 +136,16 @@
                 <!-- COURIER TRACKING NOTES & ADMIN UPDATES -->
                 <div class="track-detail-box notes-box">
                   <div class="detail-box-title">📝 ORDER NOTES & SHIPMENT UPDATES</div>
-                  <div v-if="order.notes" class="admin-notes-content">
-                    <span class="note-icon">📌</span> {{ order.notes }}
+                  <div v-if="order.notes && getNoteLines(order.notes).length > 0" class="admin-notes-content" style="display:flex; flex-direction:column; gap:6px;">
+                    <div v-for="(noteLine, nIdx) in getNoteLines(order.notes)" :key="nIdx" style="display:flex; align-items:flex-start; gap:6px; line-height:1.4;">
+                      <span>{{ noteLine }}</span>
+                    </div>
                   </div>
                   <div v-else class="admin-notes-content empty-notes">
                     <em>No custom notes added yet. Your order is being processed according to standard dispatch schedule.</em>
                   </div>
                 </div>
+
               </div>
 
               <!-- ORDER ITEMS BREAKDOWN -->
@@ -215,9 +218,29 @@ const filteredOrders = computed(() => {
 async function fetchUserOrders() {
   isLoading.value = true;
   try {
-    const res = await axios.get('/api/orders');
+    const params = {};
+    if (props.user?.email) {
+      params.email = props.user.email;
+    } else if (props.user?.phone) {
+      params.phone = props.user.phone;
+    }
+    const res = await axios.get('/api/orders', { params });
     if (res.data && res.data.success && Array.isArray(res.data.orders)) {
-      orders.value = res.data.orders;
+      let list = res.data.orders;
+      // Filter list specifically for logged in customer
+      if (props.user?.email || props.user?.phone || props.user?.name) {
+        const uEmail = (props.user?.email || '').toLowerCase().trim();
+        const uPhone = (props.user?.phone || '').trim();
+        const uName = (props.user?.name || '').toLowerCase().trim();
+
+        list = list.filter(o => {
+          const matchEmail = uEmail && String(o.customer_email || '').toLowerCase().trim() === uEmail;
+          const matchPhone = uPhone && String(o.customer_phone || '').includes(uPhone);
+          const matchName = uName && String(o.customer_name || '').toLowerCase().trim() === uName;
+          return matchEmail || matchPhone || matchName;
+        });
+      }
+      orders.value = list;
     } else {
       loadFromLocalStorage();
     }
@@ -232,12 +255,27 @@ function loadFromLocalStorage() {
   try {
     const saved = localStorage.getItem('chhabra_orders');
     if (saved) {
-      orders.value = JSON.parse(saved);
+      const allSaved = JSON.parse(saved);
+      if (props.user?.email || props.user?.phone || props.user?.name) {
+        const uEmail = (props.user?.email || '').toLowerCase().trim();
+        const uPhone = (props.user?.phone || '').trim();
+        const uName = (props.user?.name || '').toLowerCase().trim();
+
+        orders.value = allSaved.filter(o => {
+          const matchEmail = uEmail && String(o.customer_email || '').toLowerCase().trim() === uEmail;
+          const matchPhone = uPhone && String(o.customer_phone || '').includes(uPhone);
+          const matchName = uName && String(o.customer_name || '').toLowerCase().trim() === uName;
+          return matchEmail || matchPhone || matchName;
+        });
+      } else {
+        orders.value = allSaved;
+      }
     }
   } catch (e) {
     orders.value = [];
   }
 }
+
 
 function getStatusClass(status) {
   const s = String(status || '').toLowerCase();
@@ -308,6 +346,16 @@ function formatDate(dateStr) {
 function formatMoney(amount) {
   return Number(amount || 0).toLocaleString('en-IN');
 }
+
+function getNoteLines(notes) {
+  if (!notes) return [];
+  return String(notes)
+    .split(/\r?\n|;/)
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .map(line => line.startsWith('📌') ? line : '📌 ' + line);
+}
+
 
 onMounted(() => {
   fetchUserOrders();

@@ -181,7 +181,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: var(--parchment);
+      background: #ffffff;
       border-bottom: 1px solid var(--line);
       box-shadow: var(--shadow-sm);
     }
@@ -210,8 +210,8 @@
       width: auto;
       border-radius: 6px;
       object-fit: contain;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-      border: 1px solid var(--line);
+      box-shadow: none;
+      border: none;
       transition: transform .2s ease;
     }
 
@@ -2119,26 +2119,29 @@
       margin-top: 2px;
     }
 
-    /* ============ CHECKOUT MODAL ============ */
-    .checkout-modal {
+    /* ============ CHECKOUT & ORDER SUCCESS MODAL ============ */
+    .checkout-modal,
+    .order-modal {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 400;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 500;
       opacity: 0;
       visibility: hidden;
       transition: .3s ease;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .checkout-modal.open {
+    .checkout-modal.open,
+    .order-modal.open {
       opacity: 1;
       visibility: visible;
     }
+
 
     .checkout-card {
       background: var(--parchment);

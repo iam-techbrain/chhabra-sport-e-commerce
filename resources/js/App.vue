@@ -119,11 +119,18 @@
       :is-open="cartOpen"
       :cart="cart"
       :discount="discount"
+      :user="user"
       @close="cartOpen = false"
       @change-qty="changeQty"
       @remove-item="removeFromCart"
       @apply-coupon="applyCoupon"
       @checkout="openCheckout"
+    />
+
+    <AuthModal
+      :is-open="authModalOpen"
+      @close="authModalOpen = false"
+      @login-success="handleLoginSuccess"
     />
 
     <QuickViewModal
@@ -151,6 +158,7 @@
       :subtotal="cartSubtotal"
       :discount="discount"
       :cart="cart"
+      :user="user"
       @close="checkoutOpen = false"
       @order-placed="handleOrderPlaced"
     />
@@ -165,6 +173,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import axios from 'axios';
@@ -176,7 +185,7 @@ import TrustStrip from './components/TrustStrip.vue';
 import CategoryGrid from './components/CategoryGrid.vue';
 import ProductCatalog from './components/ProductCatalog.vue';
 import ProServicesSection from './components/ProServicesSection.vue';
-import BrandStrip from './components/BrandStrip.vue';
+import AuthModal from './components/AuthModal.vue';
 import CartDrawer from './components/CartDrawer.vue';
 import QuickViewModal from './components/QuickViewModal.vue';
 import SearchDrawer from './components/SearchDrawer.vue';
@@ -205,11 +214,13 @@ const wishlist = ref(new Set());
 const discount = ref(0);
 
 const cartOpen = ref(false);
+const authModalOpen = ref(false);
 const searchOpen = ref(false);
 const quickViewOpen = ref(false);
 const racquetFinderOpen = ref(false);
 const checkoutOpen = ref(false);
 const orderSuccessOpen = ref(false);
+
 
 const activeProduct = ref(null);
 const currentOrder = ref(null);
@@ -255,7 +266,7 @@ function loadPersistedState() {
 
 async function fetchProductsFromBackend() {
   try {
-    const res = await axios.get('/api/products');
+    const res = await axios.get('/api/products?all=true');
     if (res.data && res.data.success && Array.isArray(res.data.data)) {
       allProducts.value = res.data.data;
       if (res.data.data.length === 0) {
@@ -459,6 +470,12 @@ function openCheckout() {
     showToast('Please add items to cart before checkout!');
     return;
   }
+  if (!user.value) {
+    cartOpen.value = false;
+    authModalOpen.value = true;
+    showToast('Please log in or register to complete your checkout 🔐');
+    return;
+  }
   cartOpen.value = false;
   checkoutOpen.value = true;
 }
@@ -467,8 +484,16 @@ function handleLoginSuccess(userData) {
   user.value = userData;
   localStorage.setItem('chhabra_user', JSON.stringify(userData));
   showToast(`Welcome back, ${userData.name}! 🚀`);
-  handleNavigate('account');
+  authModalOpen.value = false;
+
+  // If user had items in cart, proceed straight to Checkout Modal!
+  if (cart.value.length > 0) {
+    checkoutOpen.value = true;
+  } else {
+    handleNavigate('account');
+  }
 }
+
 
 function handleLogout() {
   user.value = null;
@@ -482,10 +507,17 @@ function handleOrderPlaced(order) {
   cart.value = [];
   discount.value = 0;
   orderSuccessOpen.value = true;
-  showToast(`Order Placed! Order ID: ${order.order_number}`);
 
+  try {
+    const existing = JSON.parse(localStorage.getItem('chhabra_orders') || '[]');
+    existing.unshift(order);
+    localStorage.setItem('chhabra_orders', JSON.stringify(existing));
+  } catch (e) {}
+
+  showToast(`Order Placed! Order ID: ${order.order_number}`);
   confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 }
+
 
 function showToast(message) {
   const id = Date.now() + Math.random();

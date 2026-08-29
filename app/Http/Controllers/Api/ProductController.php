@@ -16,14 +16,34 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
+        // 1. Database Category Filter
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('category', strtolower($request->category));
+            $cat = strtolower(trim($request->category));
+            $query->whereRaw('LOWER(category) = ?', [$cat]);
         }
 
+        // 2. Database Brand Filter
         if ($request->filled('brand') && $request->brand !== 'all') {
-            $query->where('brand', 'LIKE', '%' . $request->brand . '%');
+            $brand = strtolower(trim($request->brand));
+            $query->whereRaw('LOWER(brand) = ?', [$brand]);
         }
 
+        // 3. Database Tag Filter
+        if ($request->filled('tag') && $request->tag !== 'all') {
+            $tag = strtolower(trim($request->tag));
+            $query->whereRaw('LOWER(tag) = ?', [$tag]);
+        }
+
+        // 4. Database Stock Filter
+        if ($request->filled('stock') && $request->stock !== 'all') {
+            if ($request->stock === 'in_stock') {
+                $query->where('in_stock', true);
+            } else if ($request->stock === 'out_of_stock') {
+                $query->where('in_stock', false);
+            }
+        }
+
+        // 5. Database Product Type Filter
         if ($request->filled('type') && $request->type !== 'all') {
             if ($request->type === 'variable') {
                 $query->where('is_variable', true);
@@ -34,18 +54,28 @@ class ProductController extends Controller
             }
         }
 
+        // 6. Database Full Search (Name, SKU, Brand, Category, Specs, Tag)
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('code_id', 'LIKE', "%{$search}%")
                   ->orWhere('brand', 'LIKE', "%{$search}%")
                   ->orWhere('category', 'LIKE', "%{$search}%")
-                  ->orWhere('specs', 'LIKE', "%{$search}%");
+                  ->orWhere('specs', 'LIKE', "%{$search}%")
+                  ->orWhere('tag', 'LIKE', "%{$search}%");
             });
         }
 
+        // 7. Database Sorting Engine
         if ($request->filled('sort')) {
             switch ($request->sort) {
+                case 'newest':
+                    $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at', 'asc')->orderBy('id', 'asc');
+                    break;
                 case 'price-low':
                     $query->orderBy('price', 'asc');
                     break;
@@ -56,17 +86,42 @@ class ProductController extends Controller
                     $query->orderBy('rating', 'desc');
                     break;
                 default:
-                    $query->orderBy('id', 'asc');
+                    $query->orderBy('id', 'desc');
             }
         } else {
-            $query->orderBy('id', 'asc');
+            $query->orderBy('id', 'desc');
         }
 
-        $products = $query->get();
+        $total = $query->count();
+
+        // Return unpaginated if explicitly requested via ?all=true
+        if ($request->has('all') && ($request->all === 'true' || $request->all === '1')) {
+            $products = $query->get();
+            return response()->json([
+                'success' => true,
+                'count' => $total,
+                'total' => $total,
+                'data' => $products
+            ]);
+        }
+
+        $perPage = max((int) $request->get('per_page', 10), 1);
+        $page = max((int) $request->get('page', 1), 1);
+
+        $lastPage = max((int) ceil($total / $perPage), 1);
+        if ($page > $lastPage) {
+            $page = $lastPage;
+        }
+
+        $products = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
 
         return response()->json([
             'success' => true,
             'count' => $products->count(),
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'last_page' => $lastPage,
             'data' => $products
         ]);
     }
@@ -93,7 +148,7 @@ class ProductController extends Controller
                 'reviews' => $request->reviews ?? 1,
                 'tag' => $request->tag ?? 'NEW',
                 'specs' => $request->specs ?? '',
-                'img' => $request->img ?? 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80',
+                'img' => $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
                 'in_stock' => true,
                 'is_variable' => $request->isVariable ?? $request->is_variable ?? false,
                 'variations' => $request->variations ?? []
@@ -102,7 +157,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Product '{$product->name}' with variations saved to SQLite database successfully!",
+            'message' => "Product '{$product->name}' with variations saved successfully!",
             'data' => $product
         ]);
     }
@@ -159,6 +214,33 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'data' => $cat]);
     }
 
+    public function updateCategory(Request $request, $id)
+    {
+        $request->validate(['name' => 'required|string']);
+        $cat = Category::find($id);
+        if (!$cat) {
+            $cat = Category::where('slug', $id)->orWhere('name', $id)->first();
+        }
+
+        $name = $request->name;
+        $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
+
+        if ($cat) {
+            $cat->name = $name;
+            $cat->slug = $slug;
+            if ($request->has('icon')) $cat->icon = $request->icon;
+            $cat->save();
+        } else {
+            $cat = Category::create([
+                'name' => $name,
+                'slug' => $slug,
+                'icon' => $request->icon ?? '📦'
+            ]);
+        }
+
+        return response()->json(['success' => true, 'data' => $cat]);
+    }
+
     public function destroyCategory($id)
     {
         $cat = Category::find($id);
@@ -192,6 +274,34 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'data' => $brand]);
     }
 
+    public function updateBrand(Request $request, $id)
+    {
+        $request->validate(['name' => 'required|string']);
+        $brand = Brand::find($id);
+        if (!$brand) {
+            $brand = Brand::where('name', $id)->orWhere('slug', Str::slug($id))->first();
+        }
+
+        $name = $request->name;
+        $slug = Str::slug($name);
+        $desc = $request->desc ?? $request->description ?? 'Official Sports Brand';
+
+        if ($brand) {
+            $brand->name = $name;
+            $brand->slug = $slug;
+            $brand->description = $desc;
+            $brand->save();
+        } else {
+            $brand = Brand::create([
+                'name' => $name,
+                'slug' => $slug,
+                'description' => $desc
+            ]);
+        }
+
+        return response()->json(['success' => true, 'data' => $brand]);
+    }
+
     public function destroyBrand($id)
     {
         $brand = Brand::find($id);
@@ -216,6 +326,28 @@ class ProductController extends Controller
         $slug = Str::slug($name);
 
         $tag = Tag::updateOrCreate(['slug' => $slug], ['name' => $name]);
+
+        return response()->json(['success' => true, 'data' => $tag]);
+    }
+
+    public function updateTag(Request $request, $id)
+    {
+        $request->validate(['name' => 'required|string']);
+        $tag = Tag::find($id);
+        if (!$tag) {
+            $tag = Tag::where('name', $id)->first();
+        }
+
+        $name = strtoupper(trim($request->name));
+        $slug = Str::slug($name);
+
+        if ($tag) {
+            $tag->name = $name;
+            $tag->slug = $slug;
+            $tag->save();
+        } else {
+            $tag = Tag::create(['name' => $name, 'slug' => $slug]);
+        }
 
         return response()->json(['success' => true, 'data' => $tag]);
     }

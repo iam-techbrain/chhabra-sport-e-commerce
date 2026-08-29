@@ -96,7 +96,7 @@ class ProductSeeder extends Seeder
                 'tag' => 'BESTSELLER',
                 'specs' => 'Gel Cushioning · Trusstic Tech · Non-Marking Gum Sole',
                 'img' => 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop',
-                'img2' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop',
+                'img2' => 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80&auto=format&fit=crop',
                 'in_stock' => true,
             ],
             [
@@ -170,7 +170,7 @@ class ProductSeeder extends Seeder
                 'reviews' => 78,
                 'tag' => 'GYM ESSENTIAL',
                 'specs' => 'Chrome Bar + Collars · Heavy Duty Rubber Coated Plates',
-                'img' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop',
+                'img' => 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80&auto=format&fit=crop',
                 'img2' => 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop',
                 'in_stock' => true,
             ],
@@ -246,7 +246,7 @@ class ProductSeeder extends Seeder
                 'tag' => 'PRO BADMINTON',
                 'specs' => 'FlyteFoam Technology · Twistruss Cushioning · Gum Rubber Sole',
                 'img' => 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop',
-                'img2' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop',
+                'img2' => 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80&auto=format&fit=crop',
                 'in_stock' => true,
             ],
             [
@@ -305,7 +305,7 @@ class ProductSeeder extends Seeder
                 'reviews' => 210,
                 'tag' => 'WORKOUT KIT',
                 'specs' => '100% Natural Latex · 10lbs to 50lbs · Includes Door Anchor',
-                'img' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop',
+                'img' => 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80&auto=format&fit=crop',
                 'img2' => 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop',
                 'in_stock' => true,
             ],
@@ -321,7 +321,7 @@ class ProductSeeder extends Seeder
                 'tag' => 'WORLD NO. 1',
                 'specs' => 'Power Cushion+ · Radial Blade Sole · Feather Bounce Foam',
                 'img' => 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80&auto=format&fit=crop',
-                'img2' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&auto=format&fit=crop',
+                'img2' => 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80&auto=format&fit=crop',
                 'in_stock' => true,
             ]
         ];

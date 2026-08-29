@@ -109,8 +109,23 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'address' => env('SEND_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Order Notification Emails
+    |--------------------------------------------------------------------------
+    |
+    | send_email: The outgoing sender email address.
+    | get_email: The admin email address that receives new order notifications.
+    |
+    */
+
+    'send_email' => env('SEND_EMAIL', env('MAIL_FROM_ADDRESS', 'noreply@chhabrasport.com')),
+
+    'get_email' => env('GET_EMAIL', 'admin@chhabrasport.com'),
+
 ];
+

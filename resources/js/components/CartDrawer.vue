@@ -52,7 +52,8 @@
         </div>
 
         <button class="btn btn-gold" style="width:100%; justify-content:center; padding:16px;" @click="$emit('checkout')">
-          PROCEED TO CHECKOUT →
+          <span v-if="user">PROCEED TO CHECKOUT →</span>
+          <span v-else>LOGIN / REGISTER TO CHECKOUT 🔐</span>
         </button>
       </div>
     </div>
@@ -65,8 +66,10 @@ import { ref, computed } from 'vue';
 const props = defineProps({
   isOpen: Boolean,
   cart: Array,
-  discount: Number
+  discount: Number,
+  user: Object
 });
+
 
 const emit = defineEmits(['close', 'change-qty', 'remove-item', 'apply-coupon', 'checkout']);
 

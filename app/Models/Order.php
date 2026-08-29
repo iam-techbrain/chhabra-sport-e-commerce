@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
+        'user_id',
         'order_number',
         'customer_name',
         'customer_email',
@@ -22,6 +23,11 @@ class Order extends Model
         'dispatch_warehouse',
         'items',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected $casts = [
         'items' => 'array',

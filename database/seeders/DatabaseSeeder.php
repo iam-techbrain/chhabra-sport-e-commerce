@@ -13,6 +13,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Default Admin User
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'chhabrasports',
+                'phone' => '1234567890',
+                'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+                'role' => 'Admin',
+            ]
+        );
+
         $this->call([
             CategorySeeder::class,
             BrandSeeder::class,

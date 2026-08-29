@@ -47,7 +47,7 @@ class AttributeController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Attribute '{$attribute->name}' saved to SQLite database successfully!",
+            'message' => "Attribute '{$attribute->name}' saved to successfully!",
             'data' => $attribute->load('values')
         ]);
     }

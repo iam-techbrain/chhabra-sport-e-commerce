@@ -13,7 +13,7 @@
                 <input 
                   type="text" 
                   v-model="loginForm.email" 
-                  placeholder="abc@gmail.com" 
+                  placeholder="Enter your email" 
                   required 
                 />
               </div>
@@ -74,6 +74,11 @@
               </div>
 
               <div class="form-group">
+                <label>Mobile Number <span class="required">*</span></label>
+                <input type="tel" v-model="registerForm.phone" placeholder="Enter your mobile number" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number" required />
+              </div>
+
+              <div class="form-group">
                 <label>Password <span class="required">*</span></label>
                 <input type="password" v-model="registerForm.password" placeholder="Choose a password" required />
               </div>
@@ -91,41 +96,78 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 const emit = defineEmits(['show-toast', 'login-success', 'open-admin']);
 
 const authRole = ref('customer');
 const showPassword = ref(false);
 const showRegisterForm = ref(false);
+const loading = ref(false);
 
 const loginForm = ref({
-  email: 'abc@gmail.com',
-  password: '123456',
+  email: '',
+  password: '',
   remember: true
 });
 
 const registerForm = ref({
   name: '',
   email: '',
+  phone: '',
   password: ''
 });
 
-function handleLogin() {
-  const username = loginForm.value.email.split('@')[0] || 'User';
-  emit('login-success', { name: username, email: loginForm.value.email, role: 'customer' });
-  emit('show-toast', `Welcome back, ${username}! You are logged in 🎉`);
+async function handleLogin() {
+  loading.value = true;
+  try {
+    const res = await axios.post('/api/login', {
+      email: loginForm.value.email,
+      password: loginForm.value.password
+    });
+    loading.value = false;
+    if (res.data && res.data.success) {
+      emit('login-success', res.data.user);
+      emit('show-toast', `Welcome back, ${res.data.user.name}! You are logged in 🎉`);
+    } else {
+      emit('show-toast', res.data.message || 'Login failed!');
+    }
+  } catch (err) {
+    loading.value = false;
+    const msg = err.response?.data?.message || 'Login failed. Check your credentials.';
+    emit('show-toast', msg);
+  }
 }
 
-function handleRegister() {
-  emit('login-success', { name: registerForm.value.name, email: registerForm.value.email, role: 'customer' });
-  emit('show-toast', `Account created successfully! Welcome ${registerForm.value.name} 🎉`);
-  showRegisterForm.value = false;
+async function handleRegister() {
+  loading.value = true;
+  try {
+    const res = await axios.post('/api/register', {
+      name: registerForm.value.name,
+      email: registerForm.value.email,
+      phone: registerForm.value.phone,
+      password: registerForm.value.password
+    });
+    loading.value = false;
+    if (res.data && res.data.success) {
+      emit('login-success', res.data.user);
+      emit('show-toast', `Account created successfully! Welcome ${res.data.user.name} 🎉`);
+      showRegisterForm.value = false;
+    } else {
+      emit('show-toast', res.data.message || 'Registration failed!');
+    }
+  } catch (err) {
+    loading.value = false;
+    const msg = err.response?.data?.message || 'Registration failed. Check email or mobile.';
+    emit('show-toast', msg);
+  }
 }
 
 function forgotPassword() {
   emit('show-toast', 'Password reset link sent to your registered email address!');
 }
 </script>
+
 
 <style scoped>
 .auth-page-wrap {

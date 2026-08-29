@@ -10,36 +10,23 @@
         <form @submit.prevent="submitCheckout">
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" v-model="form.customer_name" required placeholder="Enter Your Full Name">
+            <input type="text" v-model="form.customer_name" required placeholder="e.g. Rahul Sharma">
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Phone Number (10 Digits)</label>
-              <input 
-                type="tel" 
-                v-model="form.customer_phone" 
-                @input="onPhoneInput"
-                maxlength="10" 
-                pattern="[0-9]{10}"
-                required 
-                placeholder="10-digit mobile number (e.g. 9876543210)"
-              >
+              <label>Phone Number</label>
+              <input type="tel" v-model="form.customer_phone" required placeholder="+91 98765 43210">
             </div>
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" v-model="form.customer_email" required placeholder="Enter Your Email Address">
+              <input type="email" v-model="form.customer_email" required placeholder="rahul@example.com">
             </div>
           </div>
 
           <div class="form-group">
             <label>Delivery Address & Pincode</label>
-            <textarea rows="2" v-model="form.address" required placeholder="Enter Your Delivery Address & Pincode"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Order Notes / Special Instructions (Optional)</label>
-            <input type="text" v-model="form.customer_notes" placeholder="e.g. Deliver after 4 PM / Stringing preference">
+            <textarea rows="2" v-model="form.address" required placeholder="Flat / House No, Street Name, City, Pincode"></textarea>
           </div>
 
           <div class="form-group">

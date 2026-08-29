@@ -36,6 +36,7 @@
               <input 
                 type="text" 
                 v-model="searchQuery" 
+                maxlength="50"
                 placeholder="🔍 Search by Order # (e.g. CHS-)..." 
                 class="search-order-input"
               />

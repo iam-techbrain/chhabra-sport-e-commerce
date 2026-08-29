@@ -22,6 +22,7 @@
               v-model="adminLoginEmail" 
               placeholder="admin@chhabrasports.com" 
               required 
+              maxlength="80"
               class="auth-input-field"
             />
           </div>
@@ -34,6 +35,7 @@
               placeholder="••••••••" 
               value="123456"
               required 
+              maxlength="50"
               class="auth-input-field"
             />
           </div>
@@ -479,7 +481,7 @@
                 <input 
                   type="text" 
                   v-model="filters.search" 
-                  placeholder="Search by Product Name, SKU Code, Brand, Category, Specs, Tag..." 
+                  placeholder="Search product name, SKU, specs..." 
                   class="filter-input"
                   style="width:100%;"
                   @input="applyFilters"
@@ -757,7 +759,7 @@
                 <input 
                   type="text" 
                   v-model="orderSearchQuery" 
-                  placeholder="Search Order #, Name, Phone, Email, Address..." 
+                  placeholder="Search by Order #, Customer Name, Email, Phone..." 
                   class="filter-input" 
                   style="width:100%;"
                 />
@@ -976,11 +978,11 @@
             <div class="grid-2">
               <div class="field-box">
                 <label>Product Name *</label>
-                <input type="text" v-model="newProd.name" placeholder="e.g. Cosco Anti-Burst Pro Gym Ball 65cm" class="clean-input" required />
+                <input type="text" v-model="newProd.name" placeholder="e.g. Cosco Anti-Burst Pro Gym Ball 65cm" class="clean-input" required maxlength="100" />
               </div>
               <div class="field-box">
                 <label>Base SKU / Code ID *</label>
-                <input type="text" v-model="newProd.code_id" placeholder="e.g. GYM-BALL-COSCO-65" class="clean-input" required />
+                <input type="text" v-model="newProd.code_id" placeholder="e.g. GYM-BALL-COSCO-65" class="clean-input" required maxlength="30" />
               </div>
             </div>
 
@@ -1018,7 +1020,7 @@
 
             <div class="field-box" style="margin-top:16px;">
               <label>Technical Specifications & Details</label>
-              <textarea v-model="newProd.specs" rows="2" placeholder="e.g. Heavy Duty Rubber · Includes Foot Pump · 55cm to 95cm Sizes" class="clean-textarea"></textarea>
+              <textarea v-model="newProd.specs" rows="2" placeholder="e.g. Heavy Duty Rubber · Includes Foot Pump · 55cm to 95cm Sizes" class="clean-textarea" maxlength="300"></textarea>
             </div>
           </div>
 
@@ -1104,8 +1106,8 @@
               <div v-if="showNewAttrBox" class="inline-box-white">
                 <h4 style="margin:0 0 12px; color:#0F172A;">Create & Save New Variable/Attribute to Database</h4>
                 <div class="grid-2">
-                  <input type="text" v-model="newAttrForm.name" placeholder="Attribute Name (e.g. Height, Size)" class="clean-input" />
-                  <input type="text" v-model="newAttrForm.values" placeholder="Initial Values (e.g. 5-Fit, 6-Fit, 7-Fit)" class="clean-input" />
+                  <input type="text" v-model="newAttrForm.name" placeholder="Attribute Name (e.g. Height, Size)" class="clean-input" maxlength="50" />
+                  <input type="text" v-model="newAttrForm.values" placeholder="Initial Values (e.g. 5-Fit, 6-Fit, 7-Fit)" class="clean-input" maxlength="150" />
                 </div>
                 <button class="btn-primary-blue btn-sm" style="margin-top:12px;" @click="saveNewAttributeToDb">
                   + SAVE VARIABLE TO DATABASE NOW
@@ -1134,6 +1136,7 @@
                       <input 
                         type="text" 
                         v-model="attr.inputValue" 
+                        maxlength="50"
                         placeholder="Type new value (e.g. 6-Fit or 105cm) and click Add" 
                         class="clean-input-sm"
                         @keyup.enter="commitNewValueToDb(attr)"
@@ -1338,8 +1341,8 @@
           <div v-if="showBrandForm" class="inline-box-white" style="margin-bottom:20px;">
             <h4 style="margin:0 0 12px; color:#0F172A;">Register New Brand</h4>
             <div class="grid-2">
-              <input type="text" v-model="newBrandForm.name" placeholder="Brand Name (e.g. Puma, Dunlop)" class="clean-input" />
-              <input type="text" v-model="newBrandForm.desc" placeholder="Brand Tagline / Description" class="clean-input" />
+              <input type="text" v-model="newBrandForm.name" placeholder="Brand Name (e.g. Puma, Dunlop)" class="clean-input" maxlength="50" />
+              <input type="text" v-model="newBrandForm.desc" placeholder="Brand Tagline / Description" class="clean-input" maxlength="150" />
             </div>
             <button class="btn-primary-blue btn-sm" style="margin-top:12px;" @click="saveBrand">
               + SAVE BRAND NOW
@@ -1450,9 +1453,9 @@
           <div v-if="showCatForm" class="inline-box-white" style="margin-bottom:20px;">
             <h4 style="margin:0 0 12px; color:#0F172A;">Create New Category</h4>
             <div class="grid-3">
-              <input type="text" v-model="newCatForm.name" placeholder="Category Name (e.g. Squash)" class="clean-input" />
-              <input type="text" v-model="newCatForm.icon" placeholder="Emoji Icon (e.g. 🏐)" class="clean-input" />
-              <input type="text" v-model="newCatForm.slug" placeholder="URL Slug (e.g. squash-gear)" class="clean-input" />
+              <input type="text" v-model="newCatForm.name" placeholder="Category Name (e.g. Squash)" class="clean-input" maxlength="50" />
+              <input type="text" v-model="newCatForm.icon" placeholder="Emoji Icon (e.g. 🏐)" class="clean-input" maxlength="10" />
+              <input type="text" v-model="newCatForm.slug" placeholder="URL Slug (e.g. squash-gear)" class="clean-input" maxlength="50" />
             </div>
             <button class="btn-primary-blue btn-sm" style="margin-top:12px;" @click="saveCategory">
               + SAVE CATEGORY NOW
@@ -1573,6 +1576,7 @@
               <input 
                 type="text" 
                 v-model="newTagInput" 
+                maxlength="30"
                 placeholder="Enter Tag Name (e.g. HOT DEAL, TOP RATED, LIMITED)" 
                 class="clean-input"
                 @keyup.enter="saveTagFromForm"

@@ -20,7 +20,7 @@
             <input 
               type="text" 
               v-model="adminLoginEmail" 
-              placeholder="admin@chhabrasports.com" 
+              placeholder="Enter your email address" 
               required 
               maxlength="80"
               class="auth-input-field"
@@ -126,6 +126,15 @@
       <div class="admin-tem-layout">
         <!-- admin-tem SIDEBAR NAVIGATION (FIXED / NON-SCROLLABLE WITH COLLAPSE TOGGLE) -->
         <aside class="admin-tem-sidebar" :class="{ 'collapsed': isSidebarCollapsed, 'mobile-open': isMobileMenuOpen }">
+          <!-- MOBILE SIDEBAR HEADER WITH CLOSE BUTTON -->
+          <div class="mobile-sidebar-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <img src="https://chhabrasports.com/wp-content/uploads/2025/09/csa-acrylic-letter-cutting-scaled-e1756718460651.jpg" alt="Logo" style="height:26px; border-radius:4px;" />
+              <strong style="font-family:'Outfit',sans-serif; font-size:15px; font-weight:800; color:#0F172A;">Admin Menu</strong>
+            </div>
+            <button class="mobile-sidebar-close-btn" @click="isMobileMenuOpen = false" title="Close Menu">✕</button>
+          </div>
+
           <nav class="admin-tem-menu">
             <a 
               href="#" 
@@ -4220,23 +4229,61 @@ function viewOrderDetailsModal(ord) {
 }
 
 /* MOBILE BACKDROP & RESPONSIVENESS */
+.mobile-sidebar-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 10px;
+}
+
+.mobile-sidebar-close-btn {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #64748B;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-sidebar-close-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  border-color: #EF4444;
+}
+
 .mobile-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(4px);
-  z-index: 199;
+  z-index: 999;
 }
 
 @media (max-width: 768px) {
+  .mobile-sidebar-header {
+    display: flex;
+  }
+
   .admin-tem-sidebar {
     position: fixed;
-    top: 64px;
-    left: -280px;
-    height: calc(100vh - 64px);
-    width: 260px;
-    z-index: 200;
-    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+    top: 0;
+    left: -290px;
+    height: 100vh;
+    height: 100dvh;
+    width: 275px;
+    z-index: 1001;
+    background: #FFFFFF;
+    box-shadow: 10px 0 30px rgba(15, 23, 42, 0.25);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .admin-tem-sidebar.mobile-open {
@@ -4244,19 +4291,73 @@ function viewOrderDetailsModal(ord) {
   }
 
   .admin-tem-topbar {
-    padding: 0 14px;
+    height: 58px;
+    padding: 0 12px;
+  }
+
+  .topbar-left {
+    gap: 10px;
+  }
+
+  .admin-tem-logo-img {
+    height: 28px;
+  }
+
+  .admin-tem-toggle-btn {
+    display: flex;
+    background: #EEF2FF;
+    color: #4F46E5;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid #C7D2FE;
+  }
+
+  .user-name-text {
+    display: none !important;
+  }
+
+  .admin-tem-user-profile {
+    padding: 4px;
+    border-radius: 50%;
   }
 
   .admin-tem-search-box {
     display: none;
   }
 
-  .admin-tem-main-content {
-    padding: 16px;
+  .profile-dropdown-card {
+    right: 0;
+    top: 48px;
+    width: 280px;
+    max-width: 90vw;
   }
 
-  .admin-tem-hero-grid, .admin-tem-charts-grid {
-    grid-template-columns: 1fr;
+  .admin-tem-main-content {
+    padding: 14px 12px;
+    height: calc(100vh - 58px);
+  }
+
+  .admin-footer-clean {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 12px;
+    margin-top: 20px;
+  }
+
+  .admin-footer-clean .footer-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+  }
+
+  .admin-tem-hero-grid, .admin-tem-charts-grid, .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
   }
 }
 

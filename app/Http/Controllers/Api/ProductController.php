@@ -136,6 +136,13 @@ class ProductController extends Controller
             'price' => 'required|numeric'
         ]);
 
+        $inStock = true;
+        if ($request->has('in_stock')) {
+            $inStock = filter_var($request->in_stock, FILTER_VALIDATE_BOOLEAN);
+        } else if ($request->has('stockStatus')) {
+            $inStock = $request->stockStatus === 'In stock';
+        }
+
         $product = Product::updateOrCreate(
             ['code_id' => $request->code_id],
             [
@@ -149,7 +156,7 @@ class ProductController extends Controller
                 'tag' => $request->tag ?? 'NEW',
                 'specs' => $request->specs ?? '',
                 'img' => $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
-                'in_stock' => true,
+                'in_stock' => $inStock,
                 'is_variable' => $request->isVariable ?? $request->is_variable ?? false,
                 'variations' => $request->variations ?? []
             ]

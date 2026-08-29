@@ -571,15 +571,16 @@
                   <th>Brand</th>
                   <th>Price</th>
                   <th>Type</th>
+                  <th>Stock Status</th>
                   <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="isLoading" class="loading-row">
-                  <td colspan="7">Loading inventory from database... ⌛</td>
+                  <td colspan="8">Loading inventory from database... ⌛</td>
                 </tr>
                 <tr v-else-if="displayProducts.length === 0" class="empty-row">
-                  <td colspan="7">No products found matching active filters. Try resetting filters!</td>
+                  <td colspan="8">No products found matching active filters. Try resetting filters!</td>
                 </tr>
                 <tr v-for="p in displayProducts" :key="p.id || p.code_id" class="table-row-item">
                   <td>
@@ -601,6 +602,16 @@
                   <td>
                     <span class="badge-type" :class="p.is_variable || p.isVariable ? 'variable' : 'simple'">
                       {{ p.is_variable || p.isVariable ? '⚙️ Variable' : '📦 Simple' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span 
+                      class="badge-type" 
+                      :style="p.in_stock !== false && p.in_stock !== 0 && p.stockStatus !== 'Out of stock' 
+                        ? 'background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; padding:4px 8px; font-weight:700;' 
+                        : 'background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:4px 8px; font-weight:700;'"
+                    >
+                      {{ p.in_stock !== false && p.in_stock !== 0 && p.stockStatus !== 'Out of stock' ? '🟢 In Stock' : '🔴 Out of Stock' }}
                     </span>
                   </td>
                   <td style="text-align:right;">
@@ -2373,9 +2384,10 @@ function showToast(msg) {
 async function saveNewProduct() {
   isSubmitting.value = true;
   const isVar = productType.value === 'variable';
+  const isInStock = newProd.value.stockStatus !== 'Out of stock';
 
   const prodToAdd = {
-    id: 'p_custom_' + Date.now(),
+    id: newProd.value.id || ('p_custom_' + Date.now()),
     code_id: newProd.value.code_id || ('SKU-' + Date.now()),
     name: newProd.value.name,
     category: newProd.value.category,
@@ -2387,6 +2399,8 @@ async function saveNewProduct() {
     tag: newProd.value.tag || 'NEW',
     specs: newProd.value.specs || 'Custom Product Specs',
     img: newProd.value.img || 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
+    in_stock: isInStock,
+    stockStatus: newProd.value.stockStatus || (isInStock ? 'In stock' : 'Out of stock'),
     isVariable: isVar,
     variations: isVar ? variationsList.value : []
   };
@@ -2396,18 +2410,18 @@ async function saveNewProduct() {
   } catch (e) {}
 
   emit('add-product', prodToAdd);
-  showToast(`${isVar ? 'Variable' : 'Simple'} Product "${newProd.value.name}" Saved to Database & Storefront! 🎉`);
+  showToast(`${isVar ? 'Variable' : 'Simple'} Product "${newProd.value.name}" Saved (${isInStock ? 'In Stock 🟢' : 'Out of Stock 🔴'})! 🎉`);
 
   newProd.value = {
     name: '',
     code_id: '',
-    category: 'fitness',
-    brand: 'Cosco',
+    category: '',
+    brand: '',
     price: 5000,
     salePrice: 4500,
     stockStatus: 'In stock',
     specs: '',
-    tag: 'NEW',
+    tag: '',
     img: 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
     galleryImg: ''
   };
@@ -2430,6 +2444,8 @@ async function handleDeleteProduct(id) {
 
 function editProduct(p) {
   newProd.value = { ...p };
+  const stockBool = (p.in_stock !== false && p.in_stock !== 0 && p.in_stock !== 'false');
+  newProd.value.stockStatus = (p.stockStatus === 'Out of stock' || !stockBool) ? 'Out of stock' : 'In stock';
   productType.value = (p.isVariable || p.is_variable) ? 'variable' : 'simple';
   if (p.variations && Array.isArray(p.variations) && p.variations.length > 0) {
     variationsList.value = p.variations;

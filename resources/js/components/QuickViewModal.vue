@@ -25,7 +25,8 @@
           </div>
 
           <div class="stock-status-line">
-            <span class="dot-green">●</span> In Stock (Available for Instant Dispatch)
+            <span v-if="product.in_stock !== false && product.in_stock !== 0 && product.stockStatus !== 'Out of stock'" style="color:#166534;"><span class="dot-green">●</span> In Stock (Available for Instant Dispatch)</span>
+            <span v-else style="color:#991B1B; font-weight:700;"><span style="color:#EF4444;">●</span> Out of Stock (Currently Unavailable)</span>
           </div>
 
           <!-- VARIATION ATTRIBUTES DISPLAY (ONLY RENDERED FOR VARIABLE PRODUCTS) -->
@@ -94,10 +95,11 @@
         <div style="margin-top: 20px;">
           <button 
             class="btn btn-gold" 
-            style="width:100%; justify-content:center; padding:16px; margin-bottom:10px; font-weight:800; font-size:15px;" 
+            :disabled="product.in_stock === false || product.in_stock === 0 || product.stockStatus === 'Out of stock'"
+            :style="(product.in_stock === false || product.in_stock === 0 || product.stockStatus === 'Out of stock') ? 'width:100%; justify-content:center; padding:16px; margin-bottom:10px; font-weight:800; font-size:15px; opacity:0.6; cursor:not-allowed; background:#CBD5E1; color:#475569; border-color:#CBD5E1;' : 'width:100%; justify-content:center; padding:16px; margin-bottom:10px; font-weight:800; font-size:15px;'" 
             @click="handleAddToCart"
           >
-            ADD TO CART — ₹{{ formatMoney(computedPrice) }} →
+            {{ (product.in_stock === false || product.in_stock === 0 || product.stockStatus === 'Out of stock') ? 'OUT OF STOCK' : `ADD TO CART — ₹${formatMoney(computedPrice)} →` }}
           </button>
           <button class="btn btn-outline" style="width:100%; justify-content:center; padding:12px; color:var(--ink);" @click="$emit('close')">
             Continue Shopping

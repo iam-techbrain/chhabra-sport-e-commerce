@@ -78,7 +78,7 @@
         <div class="foot-bottom">
           <div>
             © 2026 Chhabra Sports. All Rights Reserved. Designed & Developed with ❤️ by 
-            <a href="https://digiritual.com/" target="_blank" rel="noopener noreferrer" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">Digi Ritual Pvt Ltd</a>.
+            <a href="https://digiritual.com/" target="_blank" rel="noopener noreferrer" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">Digi Ritual</a>.
           </div>
           <div class="pay-icons">
             <span>UPI</span>

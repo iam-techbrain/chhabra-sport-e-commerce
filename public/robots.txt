@@ -1,2 +1,13 @@
+# Chhabra Sports Robots.txt
 User-agent: *
-Disallow:
+Allow: /
+
+# Disallow administrative and private endpoints
+Disallow: /admin
+Disallow: /api/
+Disallow: /checkout
+Disallow: /account
+
+# Sitemap location
+Sitemap: http://44.198.109.227/sitemap.xml
+

@@ -5,7 +5,7 @@ use App\Models\Category;
 use App\Models\Product;
 
 Route::get('/sitemap.xml', function () {
-    $baseUrl = config('app.url', 'http://localhost');
+    $baseUrl = config('app.url', 'http://44.198.109.227');
 
     $categories = Category::all();
     $products = Product::all();

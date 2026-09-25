@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/admin-assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/admin-assets/css/plugins.min.css">
     <link rel="stylesheet" href="/admin-assets/css/kaiadmin.min.css">
+    <link rel="stylesheet" href="/admin-assets/css/kaiadmin.css">
   @endif
 
   <!-- Favicon Icons -->

@@ -85,33 +85,15 @@
 
     <!-- ========================================================= -->
     <!-- 2. MAIN KAIADMIN DASHBOARD (WHEN AUTHENTICATED)           -->
-    <!-- ========================================================= -->
-    <div v-else class="wrapper kaiadmin-wrapper" :class="{ 'sidebar_minimize': isSidebarCollapsed, 'nav_open': isMobileMenuOpen }">
+    <div v-else class="wrapper kaiadmin-wrapper" :class="{ 'sidebar_minimize': isSidebarCollapsed, 'nav_open': isMobileMenuOpen, 'topbar_open': isMobileTopbarOpen }">
       
       <!-- MOBILE SIDEBAR OVERLAY BACKDROP -->
       <div v-if="isMobileMenuOpen" class="kaiadmin-mobile-backdrop" @click="isMobileMenuOpen = false"></div>
 
       <!-- KAIADMIN SIDEBAR NAVIGATION -->
       <div class="sidebar sidebar-style-2" data-background-color="dark">
-        <!-- MOBILE CLOSE HEADER (ONLY ON SCREENS < 992px) -->
-        <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25 sidebar-mobile-header">
-          <div class="d-flex align-items-center">
-            <div class="sidebar-logo-card me-2" style="width: 32px; height: 32px; min-width: 32px;">
-              <img src="/favicon.png" alt="Chhabra Sports Logo" style="width: 20px; height: 20px; object-fit: contain;" />
-            </div>
-            <div class="d-flex flex-column text-start">
-              <span class="brand-title" style="font-size: 13px;">CHHABRA SPORTS</span>
-              <span class="sidebar-sub-badge" style="font-size: 8px;">ADMIN CONSOLE</span>
-            </div>
-          </div>
-          <button class="btn btn-link text-white p-1 btn-close-mobile-nav" @click="isMobileMenuOpen = false" title="Close Sidebar">
-            <i class="fas fa-times fs-5 text-white"></i>
-          </button>
-        </div>
-
-        <!-- DESKTOP LOGO HEADER (ONLY ON SCREENS >= 992px) -->
-        <div class="sidebar-logo d-none d-lg-block">
-          <!-- Logo Header -->
+        <!-- SIDEBAR LOGO HEADER (PURE KAIADMIN TEMPLATE) -->
+        <div class="sidebar-logo">
           <div class="logo-header" data-background-color="dark">
             <a href="#" @click.prevent="currentTab = 'dashboard'" class="logo text-decoration-none">
               <div class="sidebar-logo-card">
@@ -127,10 +109,16 @@
               </div>
             </a>
             <div class="nav-toggle">
-              <button class="btn btn-toggle toggle-sidebar" @click="isSidebarCollapsed = !isSidebarCollapsed" title="Toggle Sidebar">
+              <button class="btn btn-toggle toggle-sidebar" @click="isSidebarCollapsed = !isSidebarCollapsed" title="Toggle Desktop Sidebar">
+                <i class="fas fa-bars text-white"></i>
+              </button>
+              <button class="btn btn-toggle sidenav-toggler" :class="{ 'toggled': isMobileMenuOpen }" @click="isMobileMenuOpen = !isMobileMenuOpen" title="Toggle Navigation">
                 <i class="fas fa-bars text-white"></i>
               </button>
             </div>
+            <button class="topbar-toggler more" :class="{ 'toggled': isMobileTopbarOpen }" @click="isMobileTopbarOpen = !isMobileTopbarOpen">
+              <i class="fas fa-ellipsis-v text-white"></i>
+            </button>
           </div>
         </div>
 
@@ -264,75 +252,37 @@
       <!-- MAIN PANEL -->
       <div class="main-panel">
         
-        <!-- MAIN TOPBAR HEADER -->
+        <!-- MAIN TOPBAR HEADER (PURE KAIADMIN TEMPLATE) -->
         <div class="main-header">
-          <!-- 1. DEDICATED PRO MOBILE TOPBAR (ONLY ON SCREENS < 992px) -->
-          <div class="d-lg-none kaiadmin-mobile-bar d-flex align-items-center justify-content-between px-3">
-            <!-- Left: Sidebar Hamburger Button -->
-            <button class="btn p-1 text-white border-0 mobile-hamburger-btn" @click="isMobileMenuOpen = !isMobileMenuOpen" title="Toggle Navigation">
-              <i class="fas fa-bars fs-5"></i>
-            </button>
-
-            <!-- Center: Brand Emblem & Title -->
-            <a href="#" @click.prevent="currentTab = 'dashboard'" class="d-flex align-items-center text-decoration-none text-white mobile-brand-link">
-              <div class="sidebar-logo-card me-2" style="width: 32px; height: 32px; min-width: 32px;">
-                <img src="/favicon.png" alt="Chhabra Sports" class="sidebar-logo-img" style="width: 20px; height: 20px;" />
-              </div>
-              <div class="d-flex flex-column text-start">
-                <span class="brand-title" style="font-size: 13px;">CHHABRA SPORTS</span>
-                <span class="sidebar-sub-badge" style="font-size: 8px;">ADMIN CONSOLE</span>
-              </div>
-            </a>
-
-            <!-- Right: Quick Actions (Storefront link, Bell, Profile) -->
-            <div class="d-flex align-items-center gap-2">
-              <button class="btn btn-sm btn-outline-light rounded-circle p-1 mobile-action-btn" @click="handleExitAdmin" title="View Storefront">
-                <i class="fas fa-globe text-info" style="font-size: 13px;"></i>
+          <div class="main-header-logo">
+            <!-- Logo Header (Left-Aligned Emblem & Brand Title) -->
+            <div class="logo-header" data-background-color="dark">
+              <button class="btn btn-toggle sidenav-toggler me-2 border-0 bg-transparent text-white" :class="{ 'toggled': isMobileMenuOpen }" @click="isMobileMenuOpen = !isMobileMenuOpen" title="Toggle Navigation">
+                <i class="fas fa-bars fs-5"></i>
               </button>
-
-              <button class="btn btn-sm btn-outline-light rounded-circle p-1 position-relative mobile-action-btn" @click="currentTab = 'contact-messages'" title="Inquiries">
-                <i class="fa fa-bell text-warning" style="font-size: 13px;"></i>
-                <span v-if="unreadContactCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 9px; padding: 2px 4px;">
-                  {{ unreadContactCount }}
-                </span>
-              </button>
-
-              <div class="position-relative">
-                <button class="btn p-0 border-0 rounded-circle" @click="isProfileDropdownOpen = !isProfileDropdownOpen">
-                  <img src="https://ui-avatars.com/api/?name=Admin+Manager&background=1572E8&color=ffffff&bold=true" alt="Admin" class="rounded-circle" style="width: 30px; height: 30px;" />
-                </button>
-                <div v-if="isProfileDropdownOpen" class="dropdown-menu dropdown-user show position-absolute end-0 shadow-lg border-0" style="display:block; min-width:250px; margin-top:8px; z-index:2100; border-radius:12px;">
-                  <div class="p-3">
-                    <div class="d-flex align-items-center mb-2">
-                      <div class="me-2">
-                        <img src="https://ui-avatars.com/api/?name=Admin+Manager&background=1572E8&color=ffffff&bold=true" alt="Admin" class="rounded-circle" style="width:38px; height:38px;" />
-                      </div>
-                      <div class="overflow-hidden">
-                        <h6 class="fw-bold mb-0 text-dark text-truncate">Admin Manager</h6>
-                        <p class="text-muted small mb-0 text-truncate" style="font-size: 11px;">admin@chhabrasports.com</p>
-                      </div>
-                    </div>
-                    <hr class="my-2" />
-                    <a class="dropdown-item py-2 small" href="#" @click.prevent="currentTab = 'dashboard'; isProfileDropdownOpen = false;">
-                      <i class="fas fa-chart-line me-2 text-primary"></i> Dashboard
-                    </a>
-                    <a class="dropdown-item py-2 small" href="#" @click.prevent="currentTab = 'users'; isProfileDropdownOpen = false;">
-                      <i class="fas fa-users me-2 text-info"></i> User Accounts
-                    </a>
-                    <a class="dropdown-item py-2 small text-danger fw-semibold" href="#" @click.prevent="handleAdminLogout">
-                      <i class="fas fa-sign-out-alt me-2"></i> Logout Session
-                    </a>
-                  </div>
+              <a href="#" @click.prevent="currentTab = 'dashboard'" class="logo text-decoration-none d-flex align-items-center me-auto">
+                <div class="sidebar-logo-card me-2">
+                  <img
+                    src="/favicon.png"
+                    alt="Chhabra Sports Logo"
+                    class="sidebar-logo-img"
+                  />
                 </div>
-              </div>
+                <div class="sidebar-brand-text-wrap">
+                  <span class="brand-title">CHHABRA SPORTS</span>
+                  <span class="sidebar-sub-badge">ADMIN CONSOLE</span>
+                </div>
+              </a>
+              <button class="topbar-toggler more border-0 bg-transparent text-white" :class="{ 'toggled': isMobileTopbarOpen }" @click="isMobileTopbarOpen = !isMobileTopbarOpen">
+                <i class="fas fa-ellipsis-v fs-5"></i>
+              </button>
             </div>
+            <!-- End Logo Header -->
           </div>
 
-          <!-- 2. DESKTOP NAVBAR HEADER (ONLY ON SCREENS >= 992px) -->
-          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom d-none d-lg-flex">
+          <!-- Navbar Header (Pure Kaiadmin Responsive Header) -->
+          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
             <div class="container-fluid">
-              
-              <!-- Quick Search Input -->
               <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -350,9 +300,28 @@
                 </div>
               </nav>
 
-              <!-- Topbar Right Actions -->
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                <!-- Public Store Button -->
+                <!-- Mobile Search Dropdown Item -->
+                <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
+                  <a class="nav-link dropdown-toggle" href="#" @click.prevent="isMobileSearchOpen = !isMobileSearchOpen">
+                    <i class="fa fa-search"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-search animated fadeIn" :class="{ show: isMobileSearchOpen }" style="display: block;" v-if="isMobileSearchOpen">
+                    <form class="navbar-left navbar-form nav-search" @submit.prevent>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          placeholder="Search products, SKUs..."
+                          v-model="filters.search"
+                          @input="currentTab = 'all-products'; fetchFilteredProducts();"
+                          class="form-control"
+                        />
+                      </div>
+                    </form>
+                  </ul>
+                </li>
+
+                <!-- Public Storefront -->
                 <li class="nav-item me-3 d-none d-sm-block">
                   <button class="btn btn-outline-primary btn-round btn-sm" @click="handleExitAdmin">
                     <i class="fas fa-globe me-1"></i> Public Storefront
@@ -411,7 +380,6 @@
                   </div>
                 </li>
               </ul>
-
             </div>
           </nav>
         </div>
@@ -458,22 +426,22 @@
               </div>
             </div>
 
-            <!-- 4 KAIADMIN STATS KPI CARDS -->
-            <div class="row">
+            <!-- 4 KAIADMIN STATS KPI CARDS (2x2 Grid on Mobile) -->
+            <div class="row g-2 g-md-3">
               <!-- KPI 1: Revenue -->
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round shadow-sm border-0">
+              <div class="col-6 col-md-3">
+                <div class="card card-stats card-round shadow-sm border-0 mb-0">
                   <div class="card-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center g-0">
                       <div class="col-icon">
                         <div class="icon-big text-center icon-primary bubble-shadow-small">
                           <i class="fas fa-rupee-sign"></i>
                         </div>
                       </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
+                      <div class="col col-stats ms-2 ms-sm-3">
                         <div class="numbers">
-                          <p class="card-category">Monthly Revenue</p>
-                          <h4 class="card-title">₹{{ monthlyReportData.totalRevenue.toLocaleString() }}</h4>
+                          <p class="card-category text-truncate">Revenue</p>
+                          <h4 class="card-title text-truncate">₹{{ monthlyReportData.totalRevenue.toLocaleString() }}</h4>
                         </div>
                       </div>
                     </div>
@@ -482,19 +450,19 @@
               </div>
 
               <!-- KPI 2: Total Orders -->
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round shadow-sm border-0">
+              <div class="col-6 col-md-3">
+                <div class="card card-stats card-round shadow-sm border-0 mb-0">
                   <div class="card-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center g-0">
                       <div class="col-icon">
                         <div class="icon-big text-center icon-info bubble-shadow-small">
                           <i class="fas fa-shopping-bag"></i>
                         </div>
                       </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
+                      <div class="col col-stats ms-2 ms-sm-3">
                         <div class="numbers">
-                          <p class="card-category">Orders Placed</p>
-                          <h4 class="card-title">{{ monthlyReportData.totalOrders }} Orders</h4>
+                          <p class="card-category text-truncate">Orders</p>
+                          <h4 class="card-title text-truncate">{{ monthlyReportData.totalOrders }} Placed</h4>
                         </div>
                       </div>
                     </div>
@@ -503,19 +471,19 @@
               </div>
 
               <!-- KPI 3: Avg Order Value -->
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round shadow-sm border-0">
+              <div class="col-6 col-md-3">
+                <div class="card card-stats card-round shadow-sm border-0 mb-0">
                   <div class="card-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center g-0">
                       <div class="col-icon">
                         <div class="icon-big text-center icon-success bubble-shadow-small">
                           <i class="fas fa-calculator"></i>
                         </div>
                       </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
+                      <div class="col col-stats ms-2 ms-sm-3">
                         <div class="numbers">
-                          <p class="card-category">Avg Order Value</p>
-                          <h4 class="card-title">₹{{ monthlyReportData.avgOrderValue.toLocaleString() }}</h4>
+                          <p class="card-category text-truncate">Avg Order</p>
+                          <h4 class="card-title text-truncate">₹{{ monthlyReportData.avgOrderValue.toLocaleString() }}</h4>
                         </div>
                       </div>
                     </div>
@@ -524,19 +492,19 @@
               </div>
 
               <!-- KPI 4: Top Category -->
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round shadow-sm border-0">
+              <div class="col-6 col-md-3">
+                <div class="card card-stats card-round shadow-sm border-0 mb-0">
                   <div class="card-body">
-                    <div class="row align-items-center">
+                    <div class="row align-items-center g-0">
                       <div class="col-icon">
                         <div class="icon-big text-center icon-secondary bubble-shadow-small">
                           <i class="fas fa-crown"></i>
                         </div>
                       </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
+                      <div class="col col-stats ms-2 ms-sm-3">
                         <div class="numbers">
-                          <p class="card-category">Top Category</p>
-                          <h4 class="card-title" style="font-size:18px; word-break:break-word;">{{ monthlyReportData.topCategory }}</h4>
+                          <p class="card-category text-truncate">Top Category</p>
+                          <h4 class="card-title text-truncate" style="font-size:16px;">{{ monthlyReportData.topCategory }}</h4>
                         </div>
                       </div>
                     </div>
@@ -684,43 +652,54 @@
             </div>
 
             <!-- SEARCH & FILTER TOOLBAR CARD -->
-            <div class="card card-round shadow-sm border-0 mb-4">
-              <div class="card-body">
-                <div class="row g-3 align-items-center">
-                  <div class="col-md-4">
-                    <label class="small text-muted fw-bold">Search Products</label>
-                    <input 
-                      type="text" 
-                      v-model="filters.search" 
-                      @input="fetchFilteredProducts"
-                      placeholder="Search title, SKU or specs..." 
-                      class="form-control"
-                    />
+            <div class="card card-round shadow-sm border-0 mb-3 mb-md-4">
+              <div class="card-body p-3 p-md-4">
+                <div class="row g-2 g-md-3 align-items-center">
+                  <div class="col-12 col-md-4">
+                    <label class="small text-muted fw-bold d-none d-md-block">Search Products</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
+                      <input 
+                        type="text" 
+                        v-model="filters.search" 
+                        @input="fetchFilteredProducts"
+                        placeholder="Search title, SKU or specs..." 
+                        class="form-control border-start-0"
+                      />
+                      <button 
+                        class="btn btn-outline-secondary d-md-none border-start-0" 
+                        type="button" 
+                        @click="isProductsMobileFilterOpen = !isProductsMobileFilterOpen"
+                        :class="{ 'active text-primary fw-bold': isProductsMobileFilterOpen }"
+                      >
+                        <i class="fas fa-sliders-h me-1"></i> Filters
+                      </button>
+                    </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-6 col-md-2" :class="{ 'd-none d-md-block': !isProductsMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Category</label>
-                    <select v-model="filters.category" @change="applyFilters" class="form-select">
+                    <select v-model="filters.category" @change="applyFilters" class="form-select form-select-sm">
                       <option value="all">All Categories</option>
                       <option v-for="c in categories" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.name }}</option>
                     </select>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-6 col-md-2" :class="{ 'd-none d-md-block': !isProductsMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Brand</label>
-                    <select v-model="filters.brand" @change="applyFilters" class="form-select">
+                    <select v-model="filters.brand" @change="applyFilters" class="form-select form-select-sm">
                       <option value="all">All Brands</option>
                       <option v-for="b in brands" :key="b.id || b.name" :value="b.name">{{ b.name }}</option>
                     </select>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-6 col-md-2" :class="{ 'd-none d-md-block': !isProductsMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Stock Status</label>
-                    <select v-model="filters.stock" @change="applyFilters" class="form-select">
+                    <select v-model="filters.stock" @change="applyFilters" class="form-select form-select-sm">
                       <option value="all">All Stock</option>
                       <option value="in_stock">In Stock 🟢</option>
                       <option value="out_of_stock">Out of Stock 🔴</option>
                     </select>
                   </div>
-                  <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn btn-outline-secondary btn-round w-100" @click="resetFilters">
+                  <div class="col-6 col-md-2 d-flex align-items-end" :class="{ 'd-none d-md-block': !isProductsMobileFilterOpen }">
+                    <button class="btn btn-outline-secondary btn-round w-100 btn-sm py-2" @click="resetFilters">
                       <i class="fas fa-undo me-1"></i> Reset
                     </button>
                   </div>
@@ -1043,16 +1022,32 @@
             </div>
 
             <!-- Filters Toolbar -->
-            <div class="card card-round shadow-sm border-0 mb-4">
-              <div class="card-body">
-                <div class="row g-3">
-                  <div class="col-md-4">
-                    <label class="small text-muted fw-bold">Search Orders</label>
-                    <input type="text" v-model="orderSearchQuery" placeholder="Search order #, customer, phone..." class="form-control" />
+            <div class="card card-round shadow-sm border-0 mb-3 mb-md-4">
+              <div class="card-body p-3 p-md-4">
+                <div class="row g-2 g-md-3">
+                  <div class="col-12 col-md-4">
+                    <label class="small text-muted fw-bold d-none d-md-block">Search Orders</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted small"></i></span>
+                      <input 
+                        type="text" 
+                        v-model="orderSearchQuery" 
+                        placeholder="Search order #, customer, phone..." 
+                        class="form-control border-start-0" 
+                      />
+                      <button 
+                        class="btn btn-outline-secondary d-md-none border-start-0" 
+                        type="button" 
+                        @click="isOrdersMobileFilterOpen = !isOrdersMobileFilterOpen"
+                        :class="{ 'active text-primary fw-bold': isOrdersMobileFilterOpen }"
+                      >
+                        <i class="fas fa-sliders-h me-1"></i> Filters
+                      </button>
+                    </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-6 col-md-3" :class="{ 'd-none d-md-block': !isOrdersMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Order Status</label>
-                    <select v-model="orderStatusFilter" class="form-select">
+                    <select v-model="orderStatusFilter" class="form-select form-select-sm">
                       <option value="all">All Statuses ({{ ordersList.length }})</option>
                       <option value="Confirmed">Confirmed</option>
                       <option value="Processing">Processing</option>
@@ -1061,18 +1056,18 @@
                       <option value="Cancelled">Cancelled</option>
                     </select>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-6 col-md-3" :class="{ 'd-none d-md-block': !isOrdersMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Date Range</label>
-                    <select v-model="orderDateFilter" class="form-select">
+                    <select v-model="orderDateFilter" class="form-select form-select-sm">
                       <option value="all">All Dates</option>
                       <option value="today">Today</option>
                       <option value="week">Past 7 Days</option>
                       <option value="month">This Month</option>
                     </select>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-12 col-md-2" :class="{ 'd-none d-md-block': !isOrdersMobileFilterOpen }">
                     <label class="small text-muted fw-bold">Sort By</label>
-                    <select v-model="orderSortBy" class="form-select">
+                    <select v-model="orderSortBy" class="form-select form-select-sm">
                       <option value="newest">Newest First</option>
                       <option value="oldest">Oldest First</option>
                       <option value="amount-high">Amount (High to Low)</option>
@@ -1941,6 +1936,33 @@
       </div>
     </div>
 
+    <!-- ========================================================= -->
+    <!-- 4. KAIADMIN NATIVE MOBILE BOTTOM NAVIGATION BAR (< 768px)  -->
+    <!-- ========================================================= -->
+    <nav v-if="isAdminAuthenticated" class="d-md-none kaiadmin-bottom-nav">
+      <a href="#" class="bottom-nav-item" :class="{ active: currentTab === 'dashboard' }" @click.prevent="currentTab = 'dashboard'; isMobileMenuOpen = false;">
+        <i class="fas fa-chart-line"></i>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="bottom-nav-item" :class="{ active: currentTab === 'all-products' }" @click.prevent="currentTab = 'all-products'; isMobileMenuOpen = false;">
+        <i class="fas fa-boxes"></i>
+        <span>Catalog</span>
+      </a>
+      <a href="#" class="bottom-nav-item" :class="{ active: currentTab === 'orders' }" @click.prevent="currentTab = 'orders'; isMobileMenuOpen = false;">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Orders</span>
+      </a>
+      <a href="#" class="bottom-nav-item position-relative" :class="{ active: currentTab === 'contact-messages' }" @click.prevent="currentTab = 'contact-messages'; isMobileMenuOpen = false;">
+        <i class="fas fa-envelope"></i>
+        <span v-if="unreadContactCount > 0" class="bottom-nav-badge">{{ unreadContactCount }}</span>
+        <span>Inquiries</span>
+      </a>
+      <a href="#" class="bottom-nav-item" :class="{ active: isMobileMenuOpen }" @click.prevent="isMobileMenuOpen = !isMobileMenuOpen">
+        <i class="fas fa-bars"></i>
+        <span>Menu</span>
+      </a>
+    </nav>
+
   </div>
 </template>
 
@@ -1956,6 +1978,10 @@ const emit = defineEmits(['exit-admin', 'add-product', 'delete-product']);
 
 // Sidebar & Layout State
 const isMobileMenuOpen = ref(false);
+const isMobileTopbarOpen = ref(false);
+const isMobileSearchOpen = ref(false);
+const isProductsMobileFilterOpen = ref(false);
+const isOrdersMobileFilterOpen = ref(false);
 const isSidebarCollapsed = ref(false);
 const isProfileDropdownOpen = ref(false);
 const currentTab = ref('dashboard');
@@ -1965,6 +1991,15 @@ const adminToast = ref('');
 const isSubmitting = ref(false);
 const isLoading = ref(false);
 const isInitialLoading = ref(true);
+
+// Mobile Sidebar & Topbar Toggle Watcher (Pure KaiAdmin pattern)
+watch([isMobileMenuOpen, isMobileTopbarOpen], ([menuOpen, topbarOpen]) => {
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('nav_open', menuOpen);
+    document.documentElement.classList.toggle('topbar_open', topbarOpen);
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+  }
+});
 
 // Dynamic Stylesheet Injector for Kaiadmin
 function injectAdminCss() {
@@ -3333,12 +3368,20 @@ function viewOrderDetailsModal(ord) {
   letter-spacing: 0.5px;
 }
 
+.kaiadmin-app-root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 /* Kaiadmin Wrapper Layout */
 .kaiadmin-wrapper {
   display: flex;
   min-height: 100vh;
   position: relative;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .kaiadmin-wrapper .sidebar {
@@ -3466,7 +3509,7 @@ function viewOrderDetailsModal(ord) {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Responsiveness */
+/* Responsiveness & Mobile Styling (KaiAdmin Simple Template Style) */
 .kaiadmin-mobile-bar {
   height: 60px;
   background: #0F172A;
@@ -3474,6 +3517,7 @@ function viewOrderDetailsModal(ord) {
   position: relative;
   z-index: 1000;
   width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mobile-hamburger-btn {
@@ -3483,6 +3527,12 @@ function viewOrderDetailsModal(ord) {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.mobile-hamburger-btn:active {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .mobile-action-btn {
@@ -3492,6 +3542,13 @@ function viewOrderDetailsModal(ord) {
   align-items: center;
   justify-content: center;
   border-color: rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease;
+}
+
+.mobile-action-btn.active,
+.mobile-action-btn:active {
+  background: rgba(21, 114, 232, 0.3) !important;
+  border-color: #1572E8 !important;
 }
 
 .sidebar-mobile-header {
@@ -3500,6 +3557,94 @@ function viewOrderDetailsModal(ord) {
 
 .btn-close-mobile-nav {
   text-decoration: none !important;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.btn-close-mobile-nav:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Mobile Search Bar Drawer */
+.mobile-search-bar-wrap {
+  background: #1e293b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.slide-down-search-enter-active,
+.slide-down-search-leave-active {
+  transition: all 0.22s ease-out;
+}
+
+.slide-down-search-enter-from,
+.slide-down-search-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* Native Mobile Bottom Navigation Bar (KaiAdmin App Feel) */
+.kaiadmin-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #0F172A;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1040;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: #94a3b8;
+  text-decoration: none !important;
+  font-size: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+  gap: 3px;
+}
+
+.bottom-nav-item i {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+}
+
+.bottom-nav-item.active i {
+  transform: translateY(-2px);
+  color: #38bdf8 !important;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: 5px;
+  right: calc(50% - 15px);
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  line-height: 1.2;
 }
 
 @media (max-width: 991.98px) {
@@ -3508,17 +3653,17 @@ function viewOrderDetailsModal(ord) {
     left: 0 !important;
     top: 0 !important;
     bottom: 0 !important;
-    width: 280px !important;
+    width: 270px !important;
     max-width: 85vw !important;
     height: 100vh !important;
     z-index: 1050 !important;
-    transform: translateX(-100%) !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transform: translate3d(-270px, 0, 0) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: none !important;
   }
 
   .kaiadmin-wrapper.nav_open .sidebar {
-    transform: translateX(0) !important;
+    transform: translate3d(0, 0, 0) !important;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5) !important;
   }
 
@@ -3526,6 +3671,11 @@ function viewOrderDetailsModal(ord) {
     margin-left: 0 !important;
     width: 100% !important;
     min-width: 100% !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .kaiadmin-wrapper.nav_open .main-panel {
+    transform: translate3d(270px, 0, 0) !important;
   }
 
   .kaiadmin-wrapper .main-header {
@@ -3538,12 +3688,70 @@ function viewOrderDetailsModal(ord) {
   }
 
   .main-header-logo {
-    display: none !important;
+    display: block !important;
+    width: 100% !important;
+    background: #0F172A !important;
+  }
+
+  .main-header-logo .logo-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    height: 65px !important;
+    padding: 0 12px !important;
+    background: #0F172A !important;
+    position: relative !important;
+    gap: 8px !important;
+  }
+
+  .main-header-logo .logo-header .sidenav-toggler,
+  .logo-header .sidenav-toggler,
+  .logo-header .btn-toggle {
+    position: static !important;
+    transform: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 4px 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    order: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .main-header-logo .logo-header .logo,
+  .logo-header .logo {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    order: 2 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .main-header-logo .logo-header .topbar-toggler,
+  .logo-header .topbar-toggler {
+    position: static !important;
+    transform: none !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    padding: 4px 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    order: 3 !important;
+    flex-shrink: 0 !important;
   }
 
   .kaiadmin-content-area {
     margin-top: 0 !important;
-    padding: 16px 12px !important;
+    padding: 14px 12px 84px 12px !important; /* Bottom padding so bottom nav doesn't cover content */
   }
 
   .dashboard-header-actions {
@@ -3571,12 +3779,70 @@ function viewOrderDetailsModal(ord) {
   .table-responsive {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    border-radius: 8px !important;
   }
 
   .kaiadmin-bar-chart-container {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     padding-bottom: 10px !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* KPI 2x2 Grid compact mobile styles */
+  .card-stats .card-body {
+    padding: 10px 8px !important;
+  }
+
+  .card-stats .icon-big {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 15px !important;
+    line-height: 36px !important;
+    border-radius: 8px !important;
+  }
+
+  .card-stats .numbers .card-category {
+    font-size: 9.5px !important;
+    letter-spacing: 0.2px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .card-stats .numbers .card-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Table styling on mobile phones */
+  .table-responsive > .table {
+    min-width: 580px !important;
+  }
+
+  .table-responsive > .table td,
+  .table-responsive > .table th {
+    padding: 0.6rem 0.5rem !important;
+    font-size: 12px !important;
+  }
+
+  /* Mobile Bottom Sheet Modal feel */
+  .kaiadmin-modal-backdrop {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .kaiadmin-modal-dialog {
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    margin-bottom: 0 !important;
+    border-bottom: 0 !important;
+  }
+
+  .kaiadmin-modal-dialog .card-body {
+    padding: 16px !important;
   }
 }
 

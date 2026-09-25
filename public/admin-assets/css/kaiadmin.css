@@ -5873,9 +5873,11 @@ label.error {
     padding-left: 15px;
     padding-right: 15px; }
     .logo-header .logo {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%); }
+      position: static !important;
+      left: auto !important;
+      transform: none !important;
+      margin-left: 0 !important;
+      margin-right: auto !important; }
     .logo-header .navbar-toggler {
       height: 100%;
       margin-left: 0px !important;

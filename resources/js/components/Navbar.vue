@@ -99,7 +99,6 @@
         <a class="m-link" href="#products" @click="$emit('navigate', 'shop'); mobileMenuOpen = false">Shop Catalog <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'about'); mobileMenuOpen = false">About Us <span>›</span></a>
         <a class="m-link" href="#" @click="$emit('navigate', 'contact'); mobileMenuOpen = false">Contact Us <span>›</span></a>
-        <a class="m-link" href="#" @click="$emit('navigate', 'admin'); mobileMenuOpen = false">⚙️ Admin Control Panel <span>›</span></a>
         <a class="m-link" href="#" v-if="user" @click="$emit('navigate', 'account'); mobileMenuOpen = false">👤 {{ user.name }} (My Account) <span>›</span></a>
         <a class="m-link" href="#" v-else @click="$emit('navigate', 'auth'); mobileMenuOpen = false">👤 Login / Register <span>›</span></a>
       </div>

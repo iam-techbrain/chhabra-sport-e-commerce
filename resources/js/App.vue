@@ -101,13 +101,6 @@
       </div>
     </main>
 
-    <!-- ADMIN TRIGGER STRIP IN FOOTER -->
-    <div v-if="currentTab !== 'admin'" style="background:#0A1B15; text-align:center; padding:10px 0; border-top:1px solid rgba(227,193,116,0.2);">
-      <a href="#" @click.prevent="handleNavigate('admin')" style="color:#E3C174; font-family:'Space Mono',monospace; font-size:12px; font-weight:700; text-decoration:none;">
-        ⚙️ Open Admin Management Console (All Products, Brands, Categories, Tags, Attributes...)
-      </a>
-    </div>
-
     <!-- Footer -->
     <FooterSection
       v-if="currentTab !== 'admin'"

@@ -192,7 +192,9 @@ async function submitCheckout() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          amount: total.value
+          amount: total.value,
+          discount: Number(props.discount) || 0,
+          items: props.cart
         })
       });
 
@@ -314,17 +316,7 @@ async function submitCheckout() {
       }
     } catch (err) {
       loading.value = false;
-      // Fallback order generation if offline/test
-      const fallbackOrder = {
-        order_number: 'CHS-' + Math.floor(100000 + Math.random() * 900000),
-        customer_name: form.value.customer_name,
-        total: total.value,
-        payment_method: 'Cash on Delivery (COD)',
-        notes: form.value.customer_notes ? ('📌 Customer Note: ' + form.value.customer_notes) : '📌 Cash on Delivery Order',
-        items: props.cart
-      };
-      emit('order-placed', fallbackOrder);
-      emit('close');
+      alert('Network or Server error placing order: ' + (err.message || 'Please check your connection and try again.'));
     }
   }
 }

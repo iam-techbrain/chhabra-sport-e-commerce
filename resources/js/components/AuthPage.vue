@@ -129,6 +129,10 @@ async function handleLogin() {
     });
     loading.value = false;
     if (res.data && res.data.success) {
+      if (res.data.token) {
+        localStorage.setItem('chhabra_token', res.data.token);
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
+      }
       emit('login-success', res.data.user);
       emit('show-toast', `Welcome back, ${res.data.user.name}! You are logged in 🎉`);
     } else {
@@ -152,6 +156,10 @@ async function handleRegister() {
     });
     loading.value = false;
     if (res.data && res.data.success) {
+      if (res.data.token) {
+        localStorage.setItem('chhabra_token', res.data.token);
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
+      }
       emit('login-success', res.data.user);
       emit('show-toast', `Account created successfully! Welcome ${res.data.user.name} 🎉`);
       showRegisterForm.value = false;

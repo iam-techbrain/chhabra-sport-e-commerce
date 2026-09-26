@@ -1,0 +1,17 @@
+Hey Antigravity, humne jo audit kiya tha uske mutabiq saare critical issues ko fix aur implement karo:
+
+Security & Authentication Fixes:
+routes/api.php ke sensitive endpoints (/api/users, /api/orders, /api/products, /api/categories, /api/brands, /api/contact-messages) par proper authentication/protection lagao.
+POST /api/register me role manipulation ko block karo (only 'customer' by default).
+AuthController::login me accidental account creation remove karo.
+Hardcoded Razorpay test secret keys ko controller se hatao.
+Razorpay & Payment Security Fixes:
+createOrder me price manipulation attack fix karo (cart items total backend pe DB se recalculate karo).
+verifyPayment me verify karo ki Razorpay paid amount == order total.
+Order & Stock Inventory Management:
+Order confirm hone par Database me product ka Stock automatically deduct karo aur stock availability validate karo.
+CheckoutModal.vue se fake offline order generation fallback remove karo (API error par clear error message dikhao).
+Collision-proof Order Number generation (e.g. CHS-YYYYMMDD-XXXX) implement karo.
+Email & Admin Configuration:
+Admin receiver email config ko sync karo taaki GET_EMAIL na hone par bhi correct admin email par order notifications jayein.
+Order creation inside DB::transaction() wrap karo.

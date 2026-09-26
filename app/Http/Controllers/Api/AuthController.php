@@ -30,7 +30,8 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $role = $request->role ? trim($request->role) : 'customer';
+        // Enforce role to be customer by default, preventing privilege escalation
+        $role = 'customer';
 
         $user = User::create([
             'name' => $request->name,
@@ -40,9 +41,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
             'success' => true,
             'message' => 'Account created successfully!',
+            'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -78,34 +82,12 @@ class AuthController extends Controller
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'success' => true,
                 'message' => 'Logged in successfully!',
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'phone' => $user->phone,
-                    'role' => $user->role
-                ]
-            ]);
-        }
-
-        // If user doesn't exist yet, auto-register for convenience if valid email
-        if (!$user && filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
-            $username = explode('@', $loginInput)[0];
-            $username = ucfirst($username);
-
-            $user = User::create([
-                'name' => $username,
-                'email' => strtolower($loginInput),
-                'role' => 'customer',
-                'password' => Hash::make($request->password),
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Account created & logged in successfully!',
+                'token' => $token,
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,

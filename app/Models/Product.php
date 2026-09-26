@@ -20,6 +20,7 @@ class Product extends Model
         'img',
         'img2',
         'in_stock',
+        'stock',
         'is_variable',
         'variations'
     ];
@@ -30,6 +31,7 @@ class Product extends Model
         'rating' => 'float',
         'reviews' => 'integer',
         'in_stock' => 'boolean',
+        'stock' => 'integer',
         'is_variable' => 'boolean',
         'variations' => 'array'
     ];

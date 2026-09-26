@@ -131,10 +131,10 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'code_id' => 'required|string',
-            'category' => 'required|string',
-            'brand' => 'nullable|string',
-            'price' => 'required|numeric'
+            'price' => 'nullable',
+            'code_id' => 'nullable|string',
+            'category' => 'nullable|string',
+            'brand' => 'nullable|string'
         ]);
 
         $inStock = true;
@@ -145,6 +145,67 @@ class ProductController extends Controller
         }
 
         $brandName = $request->filled('brand') ? trim($request->brand) : 'Generic';
+
+        // Auto-create Brand in database if not existing
+        if (!empty($brandName) && strtolower($brandName) !== 'generic') {
+            Brand::firstOrCreate(
+                ['slug' => Str::slug($brandName)],
+                ['name' => $brandName, 'description' => 'Official Sports Brand']
+            );
+        }
+
+        // Auto-create Category and Subcategory in database if hierarchy string (e.g., "Cricket > Batting Gloves")
+        $rawCategory = $request->filled('category') ? trim($request->category) : 'badminton';
+        $categorySlug = Str::slug($rawCategory);
+
+        if (str_contains($rawCategory, '>')) {
+            $catParts = array_map('trim', explode('>', $rawCategory));
+            $parentCatName = $catParts[0];
+            $subCatName = $catParts[count($catParts) - 1];
+
+            $parentCategory = Category::firstOrCreate(
+                ['slug' => Str::slug($parentCatName)],
+                ['name' => $parentCatName, 'icon' => '📦']
+            );
+
+            $subCat = Category::firstOrCreate(
+                ['slug' => Str::slug($subCatName)],
+                [
+                    'name' => $subCatName,
+                    'parent_id' => $parentCategory->id,
+                    'icon' => '📦'
+                ]
+            );
+            $categorySlug = $subCat->slug;
+        } else if (!empty($rawCategory)) {
+            $createdCat = Category::firstOrCreate(
+                ['slug' => Str::slug($rawCategory)],
+                ['name' => ucfirst($rawCategory), 'icon' => '📦']
+            );
+            $categorySlug = $createdCat->slug;
+        }
+
+        // Base64 Image Processing
+        $imgUrl = $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
+        if (!empty($request->img) && str_starts_with($request->img, 'data:image/')) {
+            try {
+                if (preg_match('/data:image\/(?<type>\w+);base64,(?<data>.+)/i', $request->img, $matches)) {
+                    $imageType = strtolower($matches['type']);
+                    $imageData = base64_decode($matches['data']);
+                    $fileName = 'prod_' . time() . '_' . Str::random(6) . '.' . $imageType;
+                    
+                    $uploadPath = public_path('uploads/products');
+                    if (!file_exists($uploadPath)) {
+                        mkdir($uploadPath, 0777, true);
+                    }
+                    file_put_contents($uploadPath . '/' . $fileName, $imageData);
+                    $imgUrl = '/uploads/products/' . $fileName;
+                }
+            } catch (\Exception $e) {
+                // Fallback to placeholder if base64 decoding fails
+                $imgUrl = 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
+            }
+        }
 
         $product = null;
 
@@ -168,17 +229,41 @@ class ProductController extends Controller
             $product = new Product();
         }
 
-        $product->code_id = trim($request->code_id);
+        // Code / SKU generation and unique collision check
+        $targetCodeId = $request->filled('code_id') ? trim($request->code_id) : ('SKU-' . strtoupper(Str::random(6)));
+        $existingCodeMatch = Product::where('code_id', $targetCodeId)->where('id', '!=', $product->id ?? 0)->first();
+        if ($existingCodeMatch) {
+            if (!$request->filled('id')) {
+                // If uploading a new item without explicitly providing an existing database ID, update existing matched SKU product or append suffix
+                $product = $existingCodeMatch;
+            } else {
+                $targetCodeId = $targetCodeId . '-' . rand(10, 99);
+            }
+        }
+
+        // Price sanitization
+        $rawPrice = $request->price;
+        $cleanPrice = is_numeric($rawPrice) ? (float)$rawPrice : (float)preg_replace('/[^0-9.]/', '', (string)$rawPrice);
+        if ($cleanPrice <= 0) $cleanPrice = 1000;
+
+        $cleanOldPrice = null;
+        if ($request->filled('old_price')) {
+            $rawOld = $request->old_price;
+            $parsedOld = is_numeric($rawOld) ? (float)$rawOld : (float)preg_replace('/[^0-9.]/', '', (string)$rawOld);
+            if ($parsedOld > 0) $cleanOldPrice = $parsedOld;
+        }
+
+        $product->code_id = $targetCodeId;
         $product->name = trim($request->name);
-        $product->category = $request->category;
+        $product->category = $categorySlug;
         $product->brand = $brandName;
-        $product->price = $request->price;
-        $product->old_price = $request->old_price ?? null;
+        $product->price = $cleanPrice;
+        $product->old_price = $cleanOldPrice;
         $product->rating = $request->rating ?? 5.0;
         $product->reviews = $request->reviews ?? 1;
         $product->tag = $request->tag ?? 'NEW';
         $product->specs = $request->specs ?? '';
-        $product->img = $request->img ?? 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
+        $product->img = $imgUrl;
         $product->in_stock = $inStock;
         $product->is_variable = $request->isVariable ?? $request->is_variable ?? false;
         $product->variations = $request->variations ?? [];
@@ -249,10 +334,12 @@ class ProductController extends Controller
     // --- CATEGORY DATABASE ENDPOINTS ---
     public function categories()
     {
-        $categories = Category::all();
+        $allCategories = Category::with('parent')->get();
+        $tree = Category::with('children')->whereNull('parent_id')->get();
         return response()->json([
             'success' => true,
-            'data' => $categories
+            'data' => $allCategories,
+            'tree' => $tree
         ]);
     }
 
@@ -260,17 +347,19 @@ class ProductController extends Controller
     {
         $request->validate(['name' => 'required|string']);
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        $parentId = $request->filled('parent_id') ? $request->parent_id : null;
 
         $cat = Category::updateOrCreate(
             ['slug' => $slug],
             [
                 'name' => $request->name,
+                'parent_id' => $parentId,
                 'icon' => $request->icon ?? '📦',
                 'description' => $request->description ?? ''
             ]
         );
 
-        return response()->json(['success' => true, 'data' => $cat]);
+        return response()->json(['success' => true, 'data' => $cat->load('parent')]);
     }
 
     public function updateCategory(Request $request, $id)
@@ -278,26 +367,43 @@ class ProductController extends Controller
         $request->validate(['name' => 'required|string']);
         $cat = Category::find($id);
         if (!$cat) {
-            $cat = Category::where('slug', $id)->orWhere('name', $id)->first();
+            $cat = Category::where('slug', urldecode($id))->orWhere('name', urldecode($id))->first();
         }
 
         $name = $request->name;
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($name);
+        $parentId = null;
+        if ($request->has('parent_id') && $request->parent_id && $request->parent_id !== 'null') {
+            $parentId = $request->parent_id;
+        }
 
         if ($cat) {
+            $oldSlug = $cat->slug;
+            $oldName = $cat->name;
+
             $cat->name = $name;
             $cat->slug = $slug;
+            $cat->parent_id = $parentId;
             if ($request->has('icon')) $cat->icon = $request->icon;
             $cat->save();
+
+            // Cascade category update to products if slug/name changed
+            if ($oldSlug !== $slug || strtolower($oldName) !== strtolower($name)) {
+                Product::where('category', $oldSlug)
+                       ->orWhere('category', $oldName)
+                       ->orWhereRaw('LOWER(category) = ?', [strtolower($oldName)])
+                       ->update(['category' => $slug]);
+            }
         } else {
             $cat = Category::create([
                 'name' => $name,
                 'slug' => $slug,
+                'parent_id' => $parentId,
                 'icon' => $request->icon ?? '📦'
             ]);
         }
 
-        return response()->json(['success' => true, 'data' => $cat]);
+        return response()->json(['success' => true, 'data' => $cat->load('parent')]);
     }
 
     public function destroyCategory($id)

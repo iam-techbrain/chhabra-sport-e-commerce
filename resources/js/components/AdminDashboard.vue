@@ -161,6 +161,14 @@
                 </a>
               </li>
 
+              <li class="nav-item" :class="{ active: currentTab === 'bulk-upload' }">
+                <a href="#" @click.prevent="currentTab = 'bulk-upload'; isMobileMenuOpen = false;">
+                  <i class="fas fa-file-excel text-success"></i>
+                  <p>Bulk Upload (Excel)</p>
+                  <span class="sidebar-badge badge-num-success">CSV</span>
+                </a>
+              </li>
+
               <li class="nav-item" :class="{ active: currentTab === 'categories' }">
                 <a href="#" @click.prevent="currentTab = 'categories'; isMobileMenuOpen = false;">
                   <i class="fas fa-folder"></i>
@@ -427,7 +435,7 @@
             </div>
 
             <!-- 4 KAIADMIN STATS KPI CARDS (2x2 Grid on Mobile) -->
-            <div class="row g-2 g-md-3">
+            <div class="row g-2 g-md-3 mb-4">
               <!-- KPI 1: Revenue -->
               <div class="col-6 col-md-3">
                 <div class="card card-stats card-round shadow-sm border-0 mb-0">
@@ -644,7 +652,10 @@
                 <h3 class="fw-bold mb-1" style="color:#2A2F5B;">Product Catalog Inventory</h3>
                 <h6 class="op-7 mb-2 text-muted">Showing {{ displayProducts.length }} of {{ totalCount }} products in store database</h6>
               </div>
-              <div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-success btn-round shadow-sm" @click="currentTab = 'bulk-upload'">
+                  <i class="fas fa-file-excel me-1"></i> Bulk Excel Upload
+                </button>
                 <button class="btn btn-primary btn-round" @click="currentTab = 'add-product'">
                   <i class="fas fa-plus me-1"></i> Add New Product
                 </button>
@@ -680,7 +691,7 @@
                     <label class="small text-muted fw-bold">Category</label>
                     <select v-model="filters.category" @change="applyFilters" class="form-select form-select-sm">
                       <option value="all">All Categories</option>
-                      <option v-for="c in categories" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.name }}</option>
+                      <option v-for="c in formattedCategoryOptions" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.displayName }}</option>
                     </select>
                   </div>
                   <div class="col-6 col-md-2" :class="{ 'd-none d-md-block': !isProductsMobileFilterOpen }">
@@ -711,16 +722,16 @@
             <div class="card card-round shadow-sm border-0">
               <div class="card-body p-0">
                 <div class="table-responsive">
-                  <table class="table table-hover align-middle mb-0">
+                  <table class="table table-hover align-middle mb-0" style="min-width: 1050px;">
                     <thead class="bg-light">
                       <tr>
-                        <th class="ps-4">Product Details</th>
-                        <th>Category</th>
-                        <th>Brand</th>
-                        <th>Price (₹)</th>
-                        <th>Stock Status</th>
-                        <th>Tag</th>
-                        <th class="pe-4 text-end">Actions</th>
+                        <th class="ps-4" style="width: 260px;">Product & Image</th>
+                        <th style="width: 160px;">Category</th>
+                        <th style="width: 130px;">Brand</th>
+                        <th style="width: 150px;">Price & MRP (₹)</th>
+                        <th style="width: 150px;">Stock Status & Qty</th>
+                        <th style="width: 120px;">Tag</th>
+                        <th class="pe-4 text-end" style="width: 120px;">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -731,37 +742,96 @@
                         </td>
                       </tr>
                       <tr v-for="p in displayProducts" :key="p.id || p.code_id">
+                        <!-- Product Image & Title -->
                         <td class="ps-4">
-                          <div class="d-flex align-items-center">
-                            <img :src="p.img" :alt="p.name" class="rounded me-3 border" style="width: 46px; height: 46px; object-fit: cover;" />
-                            <div>
-                              <div class="fw-bold text-dark">{{ p.name }}</div>
-                              <small class="text-muted">SKU: {{ p.code_id }} <span v-if="p.is_variable || p.isVariable" class="badge badge-info ms-1">Variable</span></small>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="position-relative flex-shrink-0" style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: #f8fafc; border: 1px solid #cbd5e1;">
+                              <img :src="p.img" :alt="p.name" style="width: 100%; height: 100%; object-fit: cover;" />
+                              <label :for="'inline_file_' + (p.id || p.code_id)" class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white d-flex align-items-center justify-content-center cursor-pointer" style="width: 20px; height: 20px; border-top-left-radius: 4px; cursor: pointer;" title="Upload/Change Image">
+                                <i class="fas fa-camera" style="font-size: 10px;"></i>
+                                <input type="file" accept="image/*" class="d-none" :id="'inline_file_' + (p.id || p.code_id)" @change="handleInlineImageUpload($event, p)" />
+                              </label>
+                            </div>
+
+                            <div class="flex-grow-1">
+                              <input type="text" v-model="p.name" @change="saveInlineProduct(p)" class="form-control form-control-sm fw-bold text-dark mb-1" placeholder="Product Name" />
+                              <div class="d-flex align-items-center gap-1">
+                                <small class="text-muted" style="font-size: 11px;">SKU:</small>
+                                <input type="text" v-model="p.code_id" @change="saveInlineProduct(p)" class="form-control form-control-sm text-muted p-0 px-1" style="font-size: 11px; height: 20px; width: 110px;" />
+                                <span v-if="p.is_variable || p.isVariable" class="badge badge-info ms-1" style="font-size: 9px;">Variable</span>
+                              </div>
                             </div>
                           </div>
                         </td>
+
+                        <!-- Category Dropdown -->
                         <td>
-                          <span class="badge badge-light border text-dark text-capitalize">{{ p.category }}</span>
+                          <select v-model="p.category" @change="saveInlineProduct(p)" class="form-select form-select-sm">
+                            <option value="">-- Category --</option>
+                            <option v-for="c in formattedCategoryOptions" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.displayName }}</option>
+                          </select>
                         </td>
-                        <td class="fw-semibold text-secondary">{{ p.brand || 'Generic' }}</td>
+
+                        <!-- Brand Dropdown -->
                         <td>
-                          <strong class="text-dark">₹{{ Number(p.price).toLocaleString() }}</strong>
-                          <del v-if="p.old_price" class="text-muted small ms-1">₹{{ Number(p.old_price).toLocaleString() }}</del>
+                          <select v-model="p.brand" @change="saveInlineProduct(p)" class="form-select form-select-sm fw-semibold">
+                            <option value="Generic">Generic</option>
+                            <option v-for="b in brands" :key="b.id || b.name" :value="b.name">{{ b.name }}</option>
+                          </select>
                         </td>
+
+                        <!-- Price & Old MRP Price -->
                         <td>
-                          <span class="badge" :class="(p.in_stock !== false && p.stockStatus !== 'Out of stock') ? 'badge-success' : 'badge-danger'">
-                            {{ (p.in_stock !== false && p.stockStatus !== 'Out of stock') ? 'In Stock' : 'Out of Stock' }}
-                          </span>
+                          <div class="input-group input-group-sm mb-1">
+                            <span class="input-group-text fw-bold">₹</span>
+                            <input type="number" v-model.number="p.price" @change="saveInlineProduct(p)" class="form-control fw-bold" placeholder="Price" />
+                          </div>
+                          <div class="input-group input-group-sm">
+                            <span class="input-group-text text-muted small" style="font-size: 9px;">MRP</span>
+                            <input type="number" v-model.number="p.old_price" @change="saveInlineProduct(p)" class="form-control text-muted" placeholder="Old MRP" />
+                          </div>
                         </td>
+
+                        <!-- Stock Status & Quantity Number -->
                         <td>
-                          <span class="badge badge-secondary">{{ p.tag || 'PRO' }}</span>
+                          <select 
+                            v-model="p.stockStatus" 
+                            @change="p.in_stock = (p.stockStatus === 'In stock'); saveInlineProduct(p)" 
+                            class="form-select form-select-sm mb-1 fw-bold" 
+                            :class="(p.stockStatus === 'Out of stock' || p.in_stock === false) ? 'text-danger border-danger' : 'text-success border-success'"
+                          >
+                            <option value="In stock">🟢 In Stock</option>
+                            <option value="Out of stock">🔴 Out of Stock</option>
+                          </select>
+                          <div class="input-group input-group-sm">
+                            <span class="input-group-text" style="font-size: 9px;">Qty</span>
+                            <input type="number" v-model.number="p.stock" @change="saveInlineProduct(p)" class="form-control form-control-sm" placeholder="Stock Qty" />
+                          </div>
                         </td>
+
+                        <!-- Promotional Tag -->
+                        <td>
+                          <select v-model="p.tag" @change="saveInlineProduct(p)" class="form-select form-select-sm fw-bold text-uppercase">
+                            <option value="NEW">✨ NEW</option>
+                            <option value="HOT">🔥 HOT</option>
+                            <option value="BESTSELLER">⭐ BESTSELLER</option>
+                            <option value="HOT DEAL">💥 HOT DEAL</option>
+                            <option value="FEATURED">🎯 FEATURED</option>
+                            <option value="SALE">🏷️ SALE</option>
+                            <option value="PRO">⚡ PRO</option>
+                          </select>
+                        </td>
+
+                        <!-- Action Buttons -->
                         <td class="pe-4 text-end">
-                          <div class="d-inline-flex gap-2">
-                            <button class="btn btn-outline-primary btn-sm btn-round" @click="editProduct(p)" title="Edit Product">
+                          <div class="d-inline-flex gap-1">
+                            <button class="btn btn-success btn-sm btn-round px-2" @click="saveInlineProduct(p)" title="Save Inline Edits">
+                              <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm btn-round px-2" @click="editProduct(p)" title="Full Edit Modal">
                               <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-outline-danger btn-sm btn-round" @click="deleteProduct(p)" title="Delete Product">
+                            <button class="btn btn-outline-danger btn-sm btn-round px-2" @click="deleteProduct(p)" title="Delete Product">
                               <i class="fas fa-trash"></i>
                             </button>
                           </div>
@@ -795,6 +865,225 @@
               </div>
             </div>
 
+          </div>
+
+          <!-- ========================================================= -->
+          <!-- TAB: BULK EXCEL / CSV PRODUCT UPLOAD & REVIEW             -->
+          <!-- ========================================================= -->
+          <div v-else-if="currentTab === 'bulk-upload'">
+            <div class="d-flex align-items-center justify-content-between pt-2 pb-4">
+              <div>
+                <h3 class="fw-bold mb-1" style="color:#2A2F5B;">
+                  <i class="fas fa-file-excel text-success me-2"></i> Bulk Product Excel/CSV Import
+                </h3>
+                <h6 class="op-7 mb-0 text-muted">Upload product template, review parsed details, add/assign images, and bulk save to database</h6>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-success btn-round shadow-sm" @click="downloadCsvTemplate">
+                  <i class="fas fa-download me-1"></i> Download Sample Excel Template
+                </button>
+                <button class="btn btn-outline-secondary btn-round" @click="currentTab = 'all-products'">
+                  ← Back to Catalog
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 1: FILE UPLOAD DROPZONE (Visible when no parsed products) -->
+            <div v-if="bulkParsedProducts.length === 0" class="card card-round shadow-sm border-0 mb-4">
+              <div class="card-body p-5 text-center">
+                <div class="mb-3">
+                  <div class="mx-auto rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                    <i class="fas fa-file-csv fa-2x text-success"></i>
+                  </div>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">Upload Product CSV / Excel Sheet</h4>
+                <p class="text-muted small max-w-lg mx-auto mb-4" style="max-width: 550px;">
+                  Select or drag & drop your Excel exported CSV file below. The system will parse your products and let you <strong>review details & choose image options</strong> before saving!
+                </p>
+
+                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                  <label class="btn btn-success btn-lg btn-round px-4 shadow-sm cursor-pointer mb-0" style="cursor: pointer;">
+                    <i class="fas fa-upload me-2"></i> Browse & Choose CSV File
+                    <input type="file" accept=".csv, .txt" class="d-none" @change="handleCsvFileSelect" />
+                  </label>
+                  <button class="btn btn-outline-primary btn-lg btn-round px-4" @click="downloadCsvTemplate">
+                    <i class="fas fa-file-download me-2"></i> Get Sample Template (.csv)
+                  </button>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded border text-start mx-auto" style="max-width: 650px;">
+                  <h6 class="fw-bold text-dark mb-2"><i class="fas fa-info-circle text-info me-2"></i> How Template Upload Works:</h6>
+                  <ul class="small text-muted mb-0 ps-3">
+                    <li>Download the <strong>Sample CSV Template</strong> to see required column headers (Code ID, Name, Category, Brand, Price, Stock, etc.).</li>
+                    <li>Fill your product details in Excel or Google Sheets and save/export as <code>.csv</code>.</li>
+                    <li>Upload the <code>.csv</code> file here. You will see a live <strong>Review Screen</strong> where you can attach images per product or choose image settings before importing!</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2: PARSED PRODUCTS REVIEW & IMAGE SELECTION WORKSPACE -->
+            <div v-else class="card card-round shadow-sm border-0 mb-4">
+              <div class="card-header bg-transparent border-bottom py-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <div>
+                    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
+                      <span class="badge bg-success me-2 fs-6">{{ bulkParsedProducts.length }} Products Parsed</span>
+                      Review Products & Choose Image Options
+                    </h5>
+                    <small class="text-muted">Review details, edit values, upload/link images, and select which items to import into DB</small>
+                  </div>
+                  <div class="d-flex gap-2 flex-wrap align-items-center">
+                    <button class="btn btn-outline-secondary btn-sm btn-round" @click="bulkParsedProducts = []">
+                      <i class="fas fa-trash me-1"></i> Clear & Upload New File
+                    </button>
+                    <button class="btn btn-success btn-round px-4 shadow-sm fw-bold" :disabled="isBulkImporting || selectedBulkCount === 0" @click="executeBulkImport">
+                      <span v-if="isBulkImporting"><i class="fas fa-spinner fa-spin me-1"></i> Saving Products...</span>
+                      <span v-else><i class="fas fa-check-circle me-1"></i> Confirm & Import ({{ selectedBulkCount }} Products)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BULK CONTROLS & FILTER BAR -->
+              <div class="card-body bg-light border-bottom p-3">
+                <div class="row g-2 align-items-center">
+                  <div class="col-12 col-md-4">
+                    <input type="text" v-model="bulkSearchFilter" placeholder="Filter parsed list by name, code or category..." class="form-control form-control-sm" />
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <button class="btn btn-outline-dark btn-sm me-2" @click="selectAllBulk(true)">Select All</button>
+                    <button class="btn btn-outline-secondary btn-sm" @click="selectAllBulk(false)">Deselect All</button>
+                  </div>
+                  <div class="col-6 col-md-5 text-end text-muted small">
+                    Selected for import: <strong class="text-success">{{ selectedBulkCount }}</strong> of {{ bulkParsedProducts.length }} items
+                  </div>
+                </div>
+
+                <!-- PROGRESS BAR IF IMPORTING -->
+                <div v-if="isBulkImporting" class="mt-3">
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Importing Products to Database...</span>
+                    <span>{{ bulkImportProgress }}%</span>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" :style="{ width: bulkImportProgress + '%' }"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- REVIEW TABLE WITH IMAGE OPTIONS -->
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="min-width: 980px;">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 40px;" class="ps-3">
+                        <input type="checkbox" :checked="isAllBulkSelected" @change="toggleAllBulkCheckbox($event)" class="form-check-input" />
+                      </th>
+                      <th style="width: 140px;">Code / SKU</th>
+                      <th style="width: 220px;">Product Name</th>
+                      <th style="width: 150px;">Category & Brand</th>
+                      <th style="width: 120px;">Price & Stock</th>
+                      <th style="width: 320px;">Image Option & Preview (Review Stage)</th>
+                      <th style="width: 50px;" class="pe-3 text-end">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(prod, idx) in filteredBulkProducts" :key="prod.id || idx" :class="{ 'table-active': !prod.selected }">
+                      <!-- Selection Checkbox -->
+                      <td class="ps-3">
+                        <input type="checkbox" v-model="prod.selected" class="form-check-input" />
+                      </td>
+
+                      <!-- Code / SKU -->
+                      <td>
+                        <input type="text" v-model="prod.code_id" class="form-control form-control-sm" placeholder="Code ID" />
+                      </td>
+
+                      <!-- Name -->
+                      <td>
+                        <input type="text" v-model="prod.name" class="form-control form-control-sm fw-bold text-dark" placeholder="Product Title" />
+                        <small class="text-muted d-block text-truncate mt-1" style="max-width: 210px;">{{ prod.specs || 'No specs' }}</small>
+                      </td>
+
+                      <!-- Category & Brand -->
+                      <td>
+                        <select v-model="prod.category" class="form-select form-select-sm mb-1">
+                          <option value="">Category...</option>
+                          <option v-for="c in formattedCategoryOptions" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.displayName }}</option>
+                        </select>
+                        <select v-model="prod.brand" class="form-select form-select-sm">
+                          <option value="">Brand...</option>
+                          <option v-for="b in brands" :key="b.id || b.name" :value="b.name">{{ b.name }}</option>
+                        </select>
+                      </td>
+
+                      <!-- Price & Stock -->
+                      <td>
+                        <div class="input-group input-group-sm mb-1">
+                          <span class="input-group-text">₹</span>
+                          <input type="number" v-model.number="prod.price" class="form-control fw-bold" placeholder="Price" />
+                        </div>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text">Qty</span>
+                          <input type="number" v-model.number="prod.stock" class="form-control" placeholder="Stock" />
+                        </div>
+                      </td>
+
+                      <!-- IMAGE SELECTION & OPTION (CORE USER FEATURE) -->
+                      <td>
+                        <div class="d-flex align-items-center gap-2">
+                          <!-- Image Preview Box -->
+                          <div class="position-relative flex-shrink-0" style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: #f1f5f9; border: 1px solid #cbd5e1;">
+                            <img :src="getBulkProductDisplayImage(prod)" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;" />
+                          </div>
+
+                          <!-- Image Settings Controls -->
+                          <div class="flex-grow-1">
+                            <select v-model="prod.image_option" class="form-select form-select-sm mb-1">
+                              <option value="upload">🖼️ Upload Custom Image File</option>
+                              <option value="url">🔗 Paste Image URL Link</option>
+                              <option value="default">📦 Use Default Placeholder</option>
+                              <option value="none">🚫 No Image</option>
+                            </select>
+
+                            <!-- File Upload Input if option === 'upload' -->
+                            <div v-if="prod.image_option === 'upload'">
+                              <input type="file" accept="image/*" class="form-control form-control-sm" @change="handleRowImageUpload($event, prod)" />
+                            </div>
+
+                            <!-- URL Input if option === 'url' -->
+                            <div v-else-if="prod.image_option === 'url'">
+                              <input type="url" v-model="prod.img_url" class="form-control form-control-sm" placeholder="https://images.unsplash.com/..." />
+                            </div>
+
+                            <div v-else class="small text-muted fst-italic">
+                              <span v-if="prod.image_option === 'default'">Default sports product image</span>
+                              <span v-else>Will import without custom image</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Remove Action -->
+                      <td class="pe-3 text-end">
+                        <button class="btn btn-link text-danger btn-sm p-0" @click="removeBulkRow(idx)" title="Remove product row">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- CARD FOOTER CONFIRM BUTTON -->
+              <div class="card-footer bg-transparent py-3 text-end border-top">
+                <button class="btn btn-success btn-round px-4 shadow-sm fw-bold" :disabled="isBulkImporting || selectedBulkCount === 0" @click="executeBulkImport">
+                  <span v-if="isBulkImporting"><i class="fas fa-spinner fa-spin me-1"></i> Saving to Database...</span>
+                  <span v-else><i class="fas fa-cloud-upload-alt me-1"></i> Import {{ selectedBulkCount }} Products to Database</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- ========================================================= -->
@@ -845,7 +1134,7 @@
                         <div class="input-group">
                           <select v-model="newProd.category" required class="form-select">
                             <option value="">Select Category</option>
-                            <option v-for="c in categories" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.name }}</option>
+                            <option v-for="c in formattedCategoryOptions" :key="c.id || c.name" :value="c.slug || c.name.toLowerCase()">{{ c.displayName }}</option>
                           </select>
                           <button type="button" class="btn btn-outline-primary" @click="showInlineCatForm = !showInlineCatForm" title="Quick Add Category">+</button>
                         </div>
@@ -1362,16 +1651,29 @@
                     <h5 class="card-title fw-bold mb-0">{{ editingCategoryKey ? 'Edit Category' : 'Add New Category' }}</h5>
                   </div>
                   <div class="card-body">
-                    <form v-if="editingCategoryKey" @submit.prevent="saveEditCategory(categories.find(c => (c.id && c.id === editingCategoryKey) || c.slug === editingCategoryKey || c.name === editingCategoryKey))">
+                    <form v-if="editingCategoryKey" @submit.prevent="saveEditCategory">
                       <div class="mb-3">
                         <label class="form-label small fw-semibold text-muted">Category Name *</label>
                         <input 
                           type="text" 
                           v-model="editingCategoryForm.name" 
-                          placeholder="e.g. Badminton Racquets" 
+                          placeholder="e.g. Batting Gloves" 
                           required 
                           class="form-control" 
                         />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted">Parent Category (Subcategory of)</label>
+                        <select v-model="editingCategoryForm.parent_id" class="form-select">
+                          <option :value="null">-- None (Main Top-Level Category) --</option>
+                          <option 
+                            v-for="cat in categories.filter(c => !c.parent_id && (c.id !== editingCategoryKey && c.slug !== editingCategoryKey))" 
+                            :key="cat.id || cat.name" 
+                            :value="cat.id"
+                          >
+                            {{ cat.icon || '📁' }} {{ cat.name }}
+                          </option>
+                        </select>
                       </div>
                       <div class="mb-3">
                         <label class="form-label small fw-semibold text-muted">Icon / Emoji</label>
@@ -1387,7 +1689,7 @@
                         <input 
                           type="text" 
                           v-model="editingCategoryForm.slug" 
-                          placeholder="badminton-racquets" 
+                          placeholder="batting-gloves" 
                           class="form-control" 
                         />
                       </div>
@@ -1406,10 +1708,23 @@
                         <input 
                           type="text" 
                           v-model="newCatForm.name" 
-                          placeholder="e.g. Badminton Racquets" 
+                          placeholder="e.g. Batting Gloves" 
                           required 
                           class="form-control" 
                         />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted">Parent Category (Subcategory of)</label>
+                        <select v-model="newCatForm.parent_id" class="form-select">
+                          <option :value="null">-- None (Main Top-Level Category) --</option>
+                          <option 
+                            v-for="cat in categories.filter(c => !c.parent_id)" 
+                            :key="cat.id || cat.name" 
+                            :value="cat.id"
+                          >
+                            {{ cat.icon || '📁' }} {{ cat.name }}
+                          </option>
+                        </select>
                       </div>
                       <div class="mb-3">
                         <label class="form-label small fw-semibold text-muted">Icon / Emoji</label>
@@ -1425,7 +1740,7 @@
                         <input 
                           type="text" 
                           v-model="newCatForm.slug" 
-                          placeholder="badminton-racquets" 
+                          placeholder="batting-gloves" 
                           class="form-control" 
                         />
                       </div>
@@ -1450,6 +1765,7 @@
                           <tr>
                             <th class="ps-4">Icon</th>
                             <th>Category Name</th>
+                            <th>Parent / Type</th>
                             <th>Slug</th>
                             <th class="pe-4 text-end">Action</th>
                           </tr>
@@ -1457,7 +1773,18 @@
                         <tbody>
                           <tr v-for="c in filteredCategories" :key="c.id || c.name">
                             <td class="ps-4 fs-4">{{ c.icon || '📦' }}</td>
-                            <td class="fw-bold text-dark">{{ c.name }}</td>
+                            <td class="fw-bold text-dark">
+                              <span v-if="c.parent_id" class="text-muted me-1">↳</span>
+                              {{ c.name }}
+                            </td>
+                            <td>
+                              <span v-if="c.parent_id" class="badge bg-info text-white">
+                                ↳ {{ getParentCategoryName(c) }}
+                              </span>
+                              <span v-else class="badge bg-light text-primary border">
+                                📁 Main Category
+                              </span>
+                            </td>
                             <td class="text-muted">{{ c.slug || c.name.toLowerCase() }}</td>
                             <td class="pe-4 text-end">
                               <button class="btn btn-outline-primary btn-sm btn-round me-2" @click="startEditCategory(c)">
@@ -2367,6 +2694,11 @@ async function handleAdminLogin() {
       const uRole = String(res.data.user.role || '').toLowerCase();
       const uEmail = String(res.data.user.email || '').toLowerCase();
       if (uRole === 'admin' || uEmail === 'admin@gmail.com') {
+        if (res.data.token) {
+          localStorage.setItem('chhabra_token', res.data.token);
+          sessionStorage.setItem('chhabra_token', res.data.token);
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.token;
+        }
         isAdminAuthenticated.value = true;
         sessionStorage.setItem('chhabra_admin_auth', 'true');
         localStorage.setItem('chhabra_admin_auth', 'true');
@@ -2388,6 +2720,9 @@ function handleAdminLogout() {
   isProfileDropdownOpen.value = false;
   sessionStorage.setItem('chhabra_admin_auth', 'false');
   localStorage.setItem('chhabra_admin_auth', 'false');
+  localStorage.removeItem('chhabra_token');
+  sessionStorage.removeItem('chhabra_token');
+  delete axios.defaults.headers.common['Authorization'];
   removeAdminCss();
   showToast('Admin session logged out successfully! 🔒');
 }
@@ -2508,6 +2843,287 @@ async function quickCreateCategory() {
     showToast(`Category "${cName}" selected! 🎉`);
   } finally {
     isQuickCatSubmitting.value = false;
+  }
+}
+
+// --- BULK EXCEL / CSV UPLOAD STATE & FUNCTIONS ---
+const bulkParsedProducts = ref([]);
+const bulkSearchFilter = ref('');
+const isBulkImporting = ref(false);
+const bulkImportProgress = ref(0);
+
+const selectedBulkCount = computed(() => {
+  return bulkParsedProducts.value.filter(p => p.selected).length;
+});
+
+const isAllBulkSelected = computed(() => {
+  return bulkParsedProducts.value.length > 0 && bulkParsedProducts.value.every(p => p.selected);
+});
+
+const filteredBulkProducts = computed(() => {
+  if (!bulkSearchFilter.value.trim()) {
+    return bulkParsedProducts.value;
+  }
+  const q = bulkSearchFilter.value.toLowerCase().trim();
+  return bulkParsedProducts.value.filter(p => 
+    (p.name && p.name.toLowerCase().includes(q)) ||
+    (p.code_id && p.code_id.toLowerCase().includes(q)) ||
+    (p.category && p.category.toLowerCase().includes(q)) ||
+    (p.brand && p.brand.toLowerCase().includes(q))
+  );
+});
+
+function selectAllBulk(val) {
+  bulkParsedProducts.value.forEach(p => p.selected = val);
+}
+
+function toggleAllBulkCheckbox(e) {
+  selectAllBulk(e.target.checked);
+}
+
+function removeBulkRow(index) {
+  bulkParsedProducts.value.splice(index, 1);
+}
+
+// Download Sample CSV Template
+function downloadCsvTemplate() {
+  const csvHeaders = "code_id,name,category,brand,price,old_price,stock,tag,specs\n";
+  const sampleRow1 = 'CHS-RAC-101,"Yonex Astrox 99 Play Badminton Racquet",badminton,Yonex,5990,4490,25,HOT,"Weight: 4U / G5 | Tension: 28 lbs"\n';
+  const sampleRow2 = 'CHS-RAC-102,"Victor Thruster K 15 Badminton Racquet",badminton,Victor,7500,5990,15,NEW,"Weight: 5U / G5 | Tension: 30 lbs"\n';
+  const sampleRow3 = 'CHS-SH-103,"Li-Ning Ranger IV Badminton Shoes",indoor-shoes,Li-Ning,6990,5290,10,BESTSELLER,"Size: UK 8 | Non-Marking Sole"\n';
+
+  const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(csvHeaders + sampleRow1 + sampleRow2 + sampleRow3);
+  const link = document.createElement("a");
+  link.setAttribute("href", csvContent);
+  link.setAttribute("download", "chhabra_sports_products_template.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast("Sample Excel/CSV Template downloaded successfully! 📥");
+}
+
+// Handle CSV File Selection
+function handleCsvFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  parseCsvFile(file);
+}
+
+function safeNum(val, fallback = 0) {
+  if (val === null || val === undefined || val === '') return fallback;
+  if (typeof val === 'number') return isNaN(val) ? fallback : val;
+  const str = String(val).replace(/[^0-9.]/g, '');
+  const num = parseFloat(str);
+  return isNaN(num) ? fallback : num;
+}
+
+function parseCsvFile(file) {
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const text = evt.target.result;
+    const parsedRows = parseCSV(text);
+
+    if (parsedRows.length === 0) {
+      showToast("No product rows found in uploaded CSV file!");
+      return;
+    }
+
+    bulkParsedProducts.value = parsedRows.map((row, idx) => {
+      // 1. Code / SKU / ID
+      const codeId = row.sku || row.code_id || row.code || row.id || ('CHS-IMP-' + (1000 + idx));
+      
+      // 2. Name
+      const name = row.name || row.title || row.product_name || `Imported Product #${idx + 1}`;
+      
+      // 3. Category & Subcategory (e.g. "Cricket > Batting Gloves, Cricket")
+      let category = row.categories || row.category || 'badminton';
+      if (category.includes(',')) {
+        category = category.split(',')[0].trim();
+      }
+      
+      // 4. Brand
+      let brand = row.brands || row.brand || 'Generic';
+      if (!brand || brand === '1') brand = 'Generic';
+
+      // 5. Price & Old Price
+      const regPrice = safeNum(row.regular_price || row.price, 2000);
+      const salePrice = row.sale_price ? safeNum(row.sale_price, 0) : 0;
+      const finalPrice = salePrice > 0 && salePrice < regPrice ? salePrice : regPrice;
+      const finalOldPrice = salePrice > 0 && salePrice < regPrice ? regPrice : null;
+
+      // 6. Stock
+      const stock = safeNum(row.stock || row.qty || row.quantity, 25);
+
+      // 7. Image Extraction (WooCommerce images column)
+      let extractedImg = row.images || row.image || row.img_url || '';
+      if (extractedImg.includes(',')) {
+        extractedImg = extractedImg.split(',')[0].trim();
+      }
+
+      // 8. Specs & Tag
+      const rawSpecs = row.short_description || row.specs || row.description || '';
+      const cleanSpecs = rawSpecs.replace(/<[^>]*>?/gm, '').trim().slice(0, 160);
+      const tag = row.type ? row.type.toUpperCase() : 'NEW';
+
+      const imageOption = extractedImg ? 'url' : 'upload';
+
+      return {
+        id: 'tmp_' + Date.now() + '_' + idx,
+        selected: true,
+        code_id: codeId,
+        name: name,
+        category: category,
+        brand: brand,
+        price: finalPrice || 1000,
+        old_price: finalOldPrice,
+        stock: stock,
+        tag: tag,
+        specs: cleanSpecs,
+        image_option: imageOption,
+        img_url: extractedImg,
+        img_file_preview: '',
+        status: 'pending'
+      };
+    });
+
+    showToast(`${bulkParsedProducts.value.length} Products & Categories parsed from CSV! Review details & image options before saving. 📊`);
+  };
+
+  reader.readAsText(file);
+}
+
+// Custom CSV Parser
+function parseCSV(text) {
+  const lines = text.split(/\r\n|\n/);
+  if (lines.length < 2) return [];
+
+  const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_'));
+  const results = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const rawLine = lines[i].trim();
+    if (!rawLine) continue;
+
+    const values = parseCSVLine(rawLine);
+    const row = {};
+    headers.forEach((h, idx) => {
+      row[h] = values[idx] !== undefined ? values[idx].trim() : '';
+    });
+    results.push(row);
+  }
+  return results;
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"' || char === "'") {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+// Handle Image File Upload for a Single Review Row
+function handleRowImageUpload(e, prod) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    prod.img_file_preview = evt.target.result;
+    prod.img_url = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Get Image Source for Thumbnail Preview
+function getBulkProductDisplayImage(prod) {
+  if (prod.image_option === 'upload' && prod.img_file_preview) {
+    return prod.img_file_preview;
+  }
+  if (prod.image_option === 'url' && prod.img_url) {
+    return prod.img_url;
+  }
+  if (prod.image_option === 'none') {
+    return 'https://ui-avatars.com/api/?name=No+Image&background=cbd5e1&color=64748b';
+  }
+  return prod.img_url || 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80';
+}
+
+// Execute Bulk Import to Database
+async function executeBulkImport() {
+  const toImport = bulkParsedProducts.value.filter(p => p.selected);
+  if (toImport.length === 0) {
+    showToast("Please select at least one product to import!");
+    return;
+  }
+
+  isBulkImporting.value = true;
+  bulkImportProgress.value = 0;
+
+  let successCount = 0;
+  let failCount = 0;
+  let isAuthError = false;
+
+  for (let i = 0; i < toImport.length; i++) {
+    const prod = toImport[i];
+    const finalImg = getBulkProductDisplayImage(prod);
+
+    const payload = {
+      code_id: prod.code_id,
+      name: prod.name,
+      category: prod.category || 'badminton',
+      brand: prod.brand || 'Yonex',
+      price: safeNum(prod.price, 1000),
+      old_price: prod.old_price ? safeNum(prod.old_price, null) : null,
+      stock: safeNum(prod.stock, 10),
+      in_stock: safeNum(prod.stock, 10) > 0,
+      tag: prod.tag || 'NEW',
+      specs: prod.specs || '',
+      img: finalImg
+    };
+
+    try {
+      const res = await axios.post('/api/products', payload);
+      if (res.data && res.data.success) {
+        successCount++;
+        prod.status = 'success';
+      } else {
+        failCount++;
+        prod.status = 'error';
+        console.error('Bulk import item failed:', prod.name, res.data);
+      }
+    } catch (err) {
+      failCount++;
+      prod.status = 'error';
+      const status = err.response?.status;
+      const errMsg = err.response?.data?.message || err.message;
+      console.error('Bulk import item exception:', prod.name, status, errMsg);
+      if (status === 401) {
+        isAuthError = true;
+        showToast("Session expired or Unauthorized! Please re-login to Admin Panel.");
+        break;
+      }
+    }
+
+    bulkImportProgress.value = Math.round(((i + 1) / toImport.length) * 100);
+  }
+
+  isBulkImporting.value = false;
+  if (!isAuthError) {
+    showToast(`Bulk Import Completed! ${successCount} Products Saved to Database (${failCount} Failed). 🎉`);
+    await fetchFilteredProducts();
+    await loadAdminPersistedData();
   }
 }
 
@@ -2662,6 +3278,11 @@ function showToast(msg) {
 }
 
 async function saveNewProduct() {
+  if (!newProd.value.name || !newProd.value.name.trim()) {
+    showToast('Please enter Product Name!');
+    return;
+  }
+
   isSubmitting.value = true;
   const isVar = productType.value === 'variable';
   const isInStock = newProd.value.stockStatus !== 'Out of stock';
@@ -2682,9 +3303,9 @@ async function saveNewProduct() {
   }
 
   const prodToAdd = {
-    code_id: newProd.value.code_id || ('SKU-' + Date.now()),
-    name: newProd.value.name,
-    category: newProd.value.category,
+    code_id: newProd.value.code_id ? newProd.value.code_id.trim() : ('SKU-' + Date.now()),
+    name: newProd.value.name.trim(),
+    category: newProd.value.category || 'badminton',
     brand: newProd.value.brand || 'Generic',
     price: effectivePrice,
     old_price: oldPrice,
@@ -2709,32 +3330,35 @@ async function saveNewProduct() {
     const res = await axios.post('/api/products', prodToAdd);
     if (res.data && res.data.success && res.data.data) {
       savedRecord = { ...savedRecord, ...res.data.data };
+      emit('add-product', savedRecord);
+      await fetchFilteredProducts();
+      await loadAdminPersistedData();
+      showToast(`${isVar ? 'Variable' : 'Simple'} Product "${newProd.value.name}" Saved to Database! 🎉`);
+
+      newProd.value = {
+        name: '',
+        code_id: '',
+        category: '',
+        brand: '',
+        price: 5000,
+        salePrice: 4500,
+        stockStatus: 'In stock',
+        specs: '',
+        tag: '',
+        img: 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
+        galleryImg: ''
+      };
+      currentTab.value = 'all-products';
+    } else {
+      showToast(`Failed to save product: ${res.data?.message || 'Server error'}`);
     }
   } catch (e) {
     console.error('Error saving product:', e);
+    const msg = e.response?.data?.message || 'Failed to save product to Database!';
+    showToast(`Error: ${msg}`);
+  } finally {
+    isSubmitting.value = false;
   }
-
-  emit('add-product', savedRecord);
-  await fetchFilteredProducts();
-  showToast(`${isVar ? 'Variable' : 'Simple'} Product "${newProd.value.name}" Saved! 🎉`);
-
-  newProd.value = {
-    name: '',
-    code_id: '',
-    category: '',
-    brand: '',
-    price: 5000,
-    salePrice: 4500,
-    stockStatus: 'In stock',
-    specs: '',
-    tag: '',
-    img: 'https://images.unsplash.com/photo-1708312604109-16c0be9326cd?w=600&q=80',
-    galleryImg: ''
-  };
-
-  isSubmitting.value = false;
-  fetchFilteredProducts();
-  currentTab.value = 'all-products';
 }
 
 async function deleteProduct(p) {
@@ -2753,10 +3377,60 @@ async function deleteProduct(p) {
         showToast(`⚠️ ${res.data?.message || 'Cannot delete product!'}`);
       }
     } catch (e) {
-      const errMsg = e.response?.data?.message || `Cannot delete product "${name}"!`;
-      showToast(`⚠️ ${errMsg}`);
-      fetchFilteredProducts();
+      showToast(`⚠️ Cannot delete product "${name}"!`);
     }
+  }
+}
+
+function handleInlineImageUpload(e, product) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (evt) => {
+    product.img = evt.target.result;
+    showToast(`Uploading new image for "${product.name}"... ⏳`);
+    await saveInlineProduct(product);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveInlineProduct(p) {
+  if (!p || !p.name) return;
+
+  const isInStock = p.stockStatus !== 'Out of stock' && p.in_stock !== false;
+  const payload = {
+    id: p.id,
+    code_id: p.code_id,
+    name: p.name,
+    category: p.category || 'badminton',
+    brand: p.brand || 'Generic',
+    price: Number(p.price) || 0,
+    old_price: p.old_price ? Number(p.old_price) : null,
+    stock: Number(p.stock) || 0,
+    in_stock: isInStock,
+    stockStatus: isInStock ? 'In stock' : 'Out of stock',
+    tag: p.tag || 'NEW',
+    specs: p.specs || '',
+    img: p.img,
+    isVariable: p.is_variable || p.isVariable || false,
+    variations: p.variations || []
+  };
+
+  try {
+    const res = await axios.post('/api/products', payload);
+    if (res.data && res.data.success && res.data.data) {
+      if (res.data.data.img) {
+        p.img = res.data.data.img;
+      }
+      showToast(`Product "${p.name}" updated inline! ⚡🎉`);
+    } else {
+      showToast(`Failed to update product inline: ${res.data?.message || 'Error'}`);
+    }
+  } catch (e) {
+    console.error('Error saving inline product:', e);
+    const msg = e.response?.data?.message || 'Error saving changes to database.';
+    showToast(`Error: ${msg}`);
   }
 }
 
@@ -3020,55 +3694,71 @@ async function saveBrand() {
 }
 
 const editingCategoryKey = ref(null);
-const editingCategoryForm = ref({ name: '', icon: '📦', slug: '' });
-const newCatForm = ref({ name: '', icon: '📦', slug: '' });
+const editingCategoryItem = ref(null);
+const editingCategoryForm = ref({ name: '', icon: '📦', slug: '', parent_id: null });
+const newCatForm = ref({ name: '', icon: '📦', slug: '', parent_id: null });
+
+function getParentCategoryName(c) {
+  if (!c) return '';
+  if (c.parent && c.parent.name) return c.parent.name;
+  if (c.parent_id) {
+    const p = categories.value.find(cat => cat.id == c.parent_id);
+    if (p) return p.name;
+  }
+  return '';
+}
 
 function startEditCategory(c) {
+  editingCategoryItem.value = c;
   const key = c.id || c.slug || c.name;
   editingCategoryKey.value = key;
   editingCategoryForm.value = {
     name: c.name,
     icon: c.icon || '📦',
-    slug: c.slug || c.name.toLowerCase().replace(/\s+/g, '-')
+    slug: c.slug || c.name.toLowerCase().replace(/\s+/g, '-'),
+    parent_id: c.parent_id || null
   };
 }
 
 function cancelEditCategory() {
   editingCategoryKey.value = null;
-  editingCategoryForm.value = { name: '', icon: '📦', slug: '' };
+  editingCategoryItem.value = null;
+  editingCategoryForm.value = { name: '', icon: '📦', slug: '', parent_id: null };
 }
 
-async function saveEditCategory(originalCat) {
+async function saveEditCategory() {
   if (!editingCategoryForm.value.name.trim()) {
     showToast('Category name cannot be empty!');
     return;
   }
 
+  const targetCat = editingCategoryItem.value || categories.value.find(c => (c.id && c.id == editingCategoryKey.value) || c.slug === editingCategoryKey.value || c.name === editingCategoryKey.value);
+
   const updatedName = editingCategoryForm.value.name.trim();
   const updatedIcon = editingCategoryForm.value.icon.trim() || '📦';
   const updatedSlug = editingCategoryForm.value.slug.trim() || updatedName.toLowerCase().replace(/\s+/g, '-');
-  const oldIdentifier = originalCat.slug || originalCat.name;
-  const idx = categories.value.findIndex(c => (c.id && c.id === originalCat.id) || c.slug === originalCat.slug || c.name === originalCat.name);
+  const parent_id = editingCategoryForm.value.parent_id || null;
 
-  if (idx !== -1) {
-    categories.value[idx] = {
-      ...categories.value[idx],
+  const targetId = targetCat ? (targetCat.id || targetCat.slug || targetCat.name) : editingCategoryKey.value;
+
+  try {
+    const res = await axios.put(`/api/categories/${encodeURIComponent(targetId)}`, {
       name: updatedName,
       icon: updatedIcon,
-      slug: updatedSlug
-    };
-
-    try {
-      await axios.put(`/api/categories/${originalCat.id || encodeURIComponent(oldIdentifier)}`, {
-        name: updatedName,
-        icon: updatedIcon,
-        slug: updatedSlug
-      });
-    } catch (e) {}
+      slug: updatedSlug,
+      parent_id: parent_id
+    });
 
     showToast(`Category "${updatedName}" updated successfully! ✏️🎉`);
+    await loadAdminPersistedData();
+  } catch (e) {
+    console.error('Error updating category:', e);
+    showToast('Failed to update category. Please try again.');
+  } finally {
+    editingCategoryKey.value = null;
+    editingCategoryItem.value = null;
+    editingCategoryForm.value = { name: '', icon: '📦', slug: '', parent_id: null };
   }
-  editingCategoryKey.value = null;
 }
 
 async function saveCategory() {
@@ -3079,17 +3769,19 @@ async function saveCategory() {
   const name = newCatForm.value.name.trim();
   const icon = newCatForm.value.icon.trim() || '📦';
   const slug = newCatForm.value.slug.trim() || name.toLowerCase().replace(/\s+/g, '-');
+  const parent_id = newCatForm.value.parent_id || null;
 
-  const newCat = { name, icon, slug };
-  categories.value.push(newCat);
+  const newCat = { name, icon, slug, parent_id };
 
   try {
     await axios.post('/api/categories', newCat);
     await loadAdminPersistedData();
-  } catch (e) {}
+  } catch (e) {
+    categories.value.push(newCat);
+  }
 
   showToast(`Category "${name}" saved to Database! 🎉`);
-  newCatForm.value = { name: '', icon: '📦', slug: '' };
+  newCatForm.value = { name: '', icon: '📦', slug: '', parent_id: null };
 }
 
 const attributeSearchQuery = ref('');
@@ -3145,6 +3837,46 @@ const filteredCategories = computed(() => {
     c.name.toLowerCase().includes(q) || 
     (c.slug && c.slug.toLowerCase().includes(q))
   );
+});
+
+const formattedCategoryOptions = computed(() => {
+  const result = [];
+  const mainCats = categories.value.filter(c => !c.parent_id);
+
+  mainCats.forEach(main => {
+    result.push({
+      id: main.id,
+      name: main.name,
+      slug: main.slug || main.name.toLowerCase(),
+      isParent: true,
+      displayName: `📁 ${main.name}`
+    });
+
+    const children = categories.value.filter(c => c.parent_id && (c.parent_id === main.id || (c.parent && c.parent.id === main.id)));
+    children.forEach(sub => {
+      result.push({
+        id: sub.id,
+        name: sub.name,
+        slug: sub.slug || sub.name.toLowerCase(),
+        isParent: false,
+        displayName: `\u00A0\u00A0\u00A0\u00A0↳ ${sub.name}`
+      });
+    });
+  });
+
+  categories.value.forEach(c => {
+    if (!result.some(r => (c.id && r.id === c.id) || r.name === c.name)) {
+      result.push({
+        id: c.id,
+        name: c.name,
+        slug: c.slug || c.name.toLowerCase(),
+        isParent: false,
+        displayName: c.parent_id ? `\u00A0\u00A0\u00A0\u00A0↳ ${c.name}` : c.name
+      });
+    }
+  });
+
+  return result;
 });
 
 const filteredTagsList = computed(() => {
@@ -3908,6 +4640,60 @@ function viewOrderDetailsModal(ord) {
 .fade-loader-enter-from,
 .fade-loader-leave-to {
   opacity: 0;
+}
+
+/* 1.5 Custom Ultra-Thin & Sleek Scrollbar for Admin Sidebar */
+.sidebar-wrapper {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar,
+.sidebar-wrapper *::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.sidebar *::-webkit-scrollbar {
+  width: 4px !important;
+  height: 4px !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar-track,
+.sidebar-wrapper *::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track,
+.sidebar *::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar-thumb,
+.sidebar-wrapper *::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb,
+.sidebar *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-radius: 10px !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar-thumb:hover,
+.sidebar-wrapper *::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover,
+.sidebar *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Kaiadmin jquery-scrollbar plugin element support */
+.sidebar-wrapper .scroll-element.scroll-y,
+.sidebar .scroll-element.scroll-y {
+  width: 4px !important;
+  right: 2px !important;
+}
+
+.sidebar-wrapper .scroll-element .scroll-bar,
+.sidebar .scroll-element .scroll-bar {
+  background-color: rgba(255, 255, 255, 0.22) !important;
+  border-radius: 10px !important;
+}
+
+.sidebar-wrapper .scroll-element:hover .scroll-bar,
+.sidebar .scroll-element:hover .scroll-bar {
+  background-color: rgba(255, 255, 255, 0.45) !important;
 }
 
 /* 2. Official Emblem Logo Cards in Sidebar & Header */

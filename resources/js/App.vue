@@ -286,10 +286,28 @@ watch(wishlist, (newWishlist) => {
   try { localStorage.setItem('chhabra_wishlist', JSON.stringify(Array.from(newWishlist))); } catch (e) {}
 }, { deep: true });
 
+function checkAdminAuth() {
+  const token = localStorage.getItem('chhabra_token') || sessionStorage.getItem('chhabra_token');
+  const savedUser = localStorage.getItem('chhabra_user');
+  let parsedUser = null;
+  try { parsedUser = savedUser ? JSON.parse(savedUser) : null; } catch (e) {}
+
+  if (!token || !parsedUser || (parsedUser.role !== 'admin' && parsedUser.role !== 'manager')) {
+    return false;
+  }
+  return true;
+}
+
 function syncTabFromUrl() {
   const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
   const validTabs = ['home', 'shop', 'about', 'contact', 'auth', 'admin'];
   if (validTabs.includes(path)) {
+    if (path === 'admin' && !checkAdminAuth()) {
+      showToast("Access Denied! Please login with Admin credentials.");
+      currentTab.value = 'auth';
+      syncUrlFromTab('auth');
+      return;
+    }
     currentTab.value = path;
   } else {
     currentTab.value = 'home';
@@ -347,6 +365,12 @@ const cartTotalCount = computed(() => cart.value.reduce((sum, item) => sum + ite
 const cartSubtotal = computed(() => cart.value.reduce((sum, item) => sum + (item.price * item.qty), 0));
 
 function handleNavigate(tab) {
+  if (tab === 'admin' && !checkAdminAuth()) {
+    showToast("Access Denied! Please login with Admin credentials.");
+    currentTab.value = 'auth';
+    syncUrlFromTab('auth');
+    return;
+  }
   currentTab.value = tab;
   syncUrlFromTab(tab);
   window.scrollTo({ top: 0, behavior: 'smooth' });

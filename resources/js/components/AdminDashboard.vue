@@ -3237,6 +3237,18 @@ async function loadAdminPersistedData() {
 }
 
 onMounted(async () => {
+  const token = localStorage.getItem('chhabra_token') || sessionStorage.getItem('chhabra_token');
+  const savedUser = localStorage.getItem('chhabra_user');
+  let parsedUser = null;
+  try { parsedUser = savedUser ? JSON.parse(savedUser) : null; } catch (e) {}
+
+  if (!token || !parsedUser || (parsedUser.role !== 'admin' && parsedUser.role !== 'manager')) {
+    showToast("Session expired or Unauthorized. Redirecting to Login...");
+    emit('exit-admin');
+    window.location.href = '/auth';
+    return;
+  }
+
   injectAdminCss();
   checkAdminAuth();
   loadAdminPersistedData();

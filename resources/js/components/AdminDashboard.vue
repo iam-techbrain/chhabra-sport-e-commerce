@@ -3433,7 +3433,12 @@ async function saveInlineProduct(p) {
     }
   } catch (e) {
     console.error('Error saving inline product:', e);
-    const msg = e.response?.data?.message || 'Error saving changes to database.';
+    let msg = e.response?.data?.message;
+    if (!msg) {
+      if (e.response?.status === 413) msg = 'Payload too large (image size exceeds server limit)';
+      else if (e.response?.status === 500) msg = 'Server database error. Check logs.';
+      else msg = 'Error saving changes to database.';
+    }
     showToast(`Error: ${msg}`);
   }
 }

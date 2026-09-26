@@ -21,10 +21,13 @@ axios.interceptors.response.use((response) => {
     if (error.response && error.response.status === 401) {
         localStorage.removeItem('chhabra_token');
         sessionStorage.removeItem('chhabra_token');
-        localStorage.removeItem('chhabra_user');
+        sessionStorage.setItem('chhabra_admin_auth', 'false');
+        localStorage.setItem('chhabra_admin_auth', 'false');
 
         const currentPath = window.location.pathname.toLowerCase();
         if (currentPath.includes('/admin')) {
+            window.location.href = '/admin';
+        } else {
             window.location.href = '/auth';
         }
     }
